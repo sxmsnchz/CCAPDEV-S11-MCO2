@@ -1,0 +1,31 @@
+{
+  "name": "ccapdev-s11-mco2",
+  "version": "1.0.0",
+  "description": "connect mongodb with express",
+  "homepage": "https://github.com/sxmsnchz/CCAPDEV-S11-MCO2#readme",
+  "bugs": {
+    "url": "https://github.com/sxmsnchz/CCAPDEV-S11-MCO2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sxmsnchz/CCAPDEV-S11-MCO2.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.3.1",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
