@@ -24,7 +24,7 @@
                     <li><a href="/contact">Contact Us</a></li>
                     <li class="menu-profile" id="profileMenu">
                         <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
-                        <img src="/assets/profile-icon.png" alt="Account" class="profile-icon">
+                            <img src="/assets/profile-icon.png" alt="Account" class="profile-icon">
                         </button>
                         <ul class="profile-dropdown" id="profileDropdown" role="menu" aria-label="Account menu"></ul>
                     </li>
@@ -32,7 +32,6 @@
             </nav>
 
             <div class="profile-container" id="profileContent" style="display: none;">
-                <!-- Organization Header -->
                 <div class="profile-header" style="display: flex; align-items: center; gap: 30px;">
                     <img id="orgLogo" src="" alt="Organization Logo" class="profile-pic-large">
                     <div>
@@ -46,7 +45,6 @@
                     </div>
                 </div>
 
-                <!-- Stats Overview -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div>👥</div>
@@ -65,9 +63,7 @@
                     </div>
                 </div>
 
-                <!-- Organization Information Grid -->
                 <div class="info-grid">
-                    <!-- About Section -->
                     <div class="info-card">
                         <h3>About Us</h3>
                         <p id="orgDescription"></p>
@@ -77,26 +73,21 @@
                         </div>
                     </div>
 
-                    <!-- Contact Information -->
                     <div class="info-card">
                         <h3>Contact Information</h3>
                         <p><strong>📧 Email:</strong> <span id="contactEmail"></span></p>
-                        <p><strong>📱 Contact:</strong> <span id="contactPhone"></span></p>
                         <p><strong>👑 President:</strong> <span id="orgPresident"></span></p>
-                        <p><strong>👑 Vice President:</strong> <span id="orgVP"></span></p>
                         <div style="margin-top: 20px;">
                             <h4 style="color: #046307; margin-bottom: 10px;">Social Media</h4>
                             <div id="socialMediaTags"></div>
                         </div>
                     </div>
 
-                    <!-- Key Members -->
                     <div class="info-card">
                         <h3>Key Members</h3>
                         <ul class="members-list" id="keyMembersList"></ul>
                     </div>
 
-                    <!-- Recent Activities -->
                     <div class="info-card">
                         <h3>Recent Activities</h3>
                         <div id="recentActivities">
@@ -107,7 +98,6 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
                 <div style="background: #e9f5e9; padding: 25px; border-radius: 14px; border: 2px solid #046307; margin-top: 30px;">
                     <h3 style="color: #046307; margin-bottom: 15px;">Quick Actions</h3>
                     <div style="display: flex; gap: 15px; flex-wrap: wrap;">
@@ -115,6 +105,7 @@
                         <button onclick="manageEvents()" class="btn-action">📅 Manage Events</button>
                         <button onclick="viewMembers()" class="btn-action">👥 View All Members</button>
                         <button onclick="downloadReports()" class="btn-action">📊 Download Reports</button>
+                        <button onclick="logout()" class="btn-action" style="background: #f44336;">🚪 Logout</button>
                     </div>
                 </div>
             </div>
@@ -123,7 +114,6 @@
                 <p>Loading organization profile...</p>
             </div>
 
-            <!-- Edit Profile Modal -->
             <div id="editModal" class="modal-overlay">
                 <div class="modal-content">
                     <span class="close-modal" onclick="closeEditModal()">&times;</span>
@@ -139,15 +129,9 @@
                             <textarea id="editOrgDesc" rows="4"></textarea>
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>President</label>
-                                <input type="text" id="editPresident">
-                            </div>
-                            <div class="form-group">
-                                <label>Vice President</label>
-                                <input type="text" id="editVicePresident">
-                            </div>
+                        <div class="form-group">
+                            <label>President</label>
+                            <input type="text" id="editPresident">
                         </div>
                         
                         <div class="form-group">
@@ -163,43 +147,30 @@
                 </div>
             </div>
 
-            <!-- First, load the auth-guard.js file -->
             <script src="/script.js"></script>
+
+            <script id="user-json" type="application/json">
+                <%- JSON.stringify(user || {}) %>
+            </script>
+
             <script>
-                // Use AuthGuard to protect this page
-                document.addEventListener('DOMContentLoaded', function() {
-                    try {
-                        const userInfo = AuthGuard.protectPage('organization');
-                        
-                        if (userInfo) {
-                            // Auth successful, show content
-                            document.getElementById('loadingMessage').style.display = 'none';
-                            document.getElementById('profileContent').style.display = 'block';
-                            
-                            // Initialize profile with user data
-                            initializeProfile(userInfo.user);
-                        }
-                    } catch (error) {
-                        console.error('Profile error:', error);
-                        document.getElementById('loadingMessage').innerHTML = 
-                            '<p style="color: #d32f2f;">Error loading profile. Redirecting...</p>';
-                        setTimeout(() => {
-                            window.location.href = "/login";
-                        }, 2000);
-                    }
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('profileContent').style.display = 'block';
+
+                    const userData = JSON.parse(document.getElementById('user-json').textContent);
+                    initializeProfile(userData);
                 });
 
                 function initializeProfile(user) {
-                    // Demo organization data
                     const orgData = {
-                        name: user.orgName || "Archers for UNICEF",
-                        tagline: "Always for the women and children",
-                        description: "Archers for UNICEF is a DLSU-based organization committed to supporting UNICEF initiatives and empowering students to advocate for women and children's rights through meaningful events, partnerships, and outreach programs.",
-                        type: "Volunteer Organization",
-                        contactEmail: user.email || "au@dlsu.edu.ph",
-                        contactPhone: "+63 912 345 6789",
-                        president: "Cherubim Citco",
-                        vicePresident: "Sarah Lee",
+                        name: user.orgName || "",
+                        tagline: user.tagline || "",
+                        description: user.description || "",
+                        type: user.orgType || "",
+                        contactEmail: user.email || "",
+                        president: user.president || "",
+                        logo: user.logo || "/assets/default-org.png",
                         membersCount: 150,
                         eventsCount: 3,
                         postsCount: 3,
@@ -209,7 +180,7 @@
                             instagram: "@archersforunicef"
                         },
                         keyMembers: [
-                            { name: "Cherubim Citco", role: "President" },
+                            { name: user.president || "Organization President", role: "President" },
                             { name: "Aiella Evangelista", role: "EVP - Internal Affairs" },
                             { name: "Grace Gonzales", role: "EVP - External Affairs" },
                             { name: "Karll Cueto", role: "EVP - Integrated Marketing Communications" },
@@ -217,62 +188,52 @@
                         ]
                     };
 
-                    // Populate organization data with XSS protection
-                    document.getElementById('orgLogo').src = "assets/au_logo1.png";
-                    document.getElementById('orgName').textContent = escapeHtml(orgData.name);
-                    document.getElementById('orgTagline').textContent = escapeHtml(orgData.tagline);
-                    document.getElementById('orgDescription').textContent = escapeHtml(orgData.description);
-                    document.getElementById('orgType').textContent = escapeHtml(orgData.type);
-                    document.getElementById('contactEmail').textContent = escapeHtml(orgData.contactEmail);
-                    document.getElementById('contactPhone').textContent = escapeHtml(orgData.contactPhone);
-                    document.getElementById('orgPresident').textContent = escapeHtml(orgData.president);
-                    document.getElementById('orgVP').textContent = escapeHtml(orgData.vicePresident);
-                    document.getElementById('membersCount').textContent = escapeHtml(orgData.membersCount.toString());
-                    document.getElementById('eventsCount').textContent = escapeHtml(orgData.eventsCount.toString());
-                    document.getElementById('postsCount').textContent = escapeHtml(orgData.postsCount.toString());
+                    document.getElementById('orgLogo').src = orgData.logo;
+                    document.getElementById('orgName').textContent = orgData.name;
+                    document.getElementById('orgTagline').textContent = orgData.tagline;
+                    document.getElementById('orgDescription').textContent = orgData.description;
+                    document.getElementById('orgType').textContent = orgData.type;
+                    document.getElementById('contactEmail').textContent = orgData.contactEmail;
+                    document.getElementById('orgPresident').textContent = orgData.president;
+                    document.getElementById('membersCount').textContent = orgData.membersCount;
+                    document.getElementById('eventsCount').textContent = orgData.eventsCount;
+                    document.getElementById('postsCount').textContent = orgData.postsCount;
 
-                    // Populate social media tags with XSS protection
                     const socialContainer = document.getElementById('socialMediaTags');
+                    socialContainer.innerHTML = "";
+
                     Object.entries(orgData.socialMedia).forEach(([platform, handle]) => {
                         const tag = document.createElement('span');
                         tag.className = 'tag social-tag';
-                        tag.textContent = `${escapeHtml(platform)}: ${escapeHtml(handle)}`;
+                        tag.textContent = `${platform}: ${handle}`;
                         socialContainer.appendChild(tag);
                     });
 
-                    // Populate key members with XSS protection
                     const membersList = document.getElementById('keyMembersList');
+                    membersList.innerHTML = "";
+
                     orgData.keyMembers.forEach(member => {
                         const li = document.createElement('li');
-                        li.innerHTML = `
-                            <span>${escapeHtml(member.name)}</span>
-                            <span class="member-role">${escapeHtml(member.role)}</span>
-                        `;
+
+                        const nameSpan = document.createElement('span');
+                        nameSpan.textContent = member.name;
+
+                        const roleSpan = document.createElement('span');
+                        roleSpan.className = 'member-role';
+                        roleSpan.textContent = member.role;
+
+                        li.appendChild(nameSpan);
+                        li.appendChild(roleSpan);
                         membersList.appendChild(li);
                     });
                 }
 
-                function escapeHtml(text) {
-                    if (typeof text !== 'string') return text;
-                    const div = document.createElement('div');
-                    div.textContent = text;
-                    return div.innerHTML;
-                }
-
-                // Modal functions
                 function openEditModal() {
-                    const orgName = document.getElementById('orgName').textContent;
-                    const orgDesc = document.getElementById('orgDescription').textContent;
-                    const president = document.getElementById('orgPresident').textContent;
-                    const vp = document.getElementById('orgVP').textContent;
-                    const email = document.getElementById('contactEmail').textContent;
-                    
-                    document.getElementById('editOrgName').value = orgName;
-                    document.getElementById('editOrgDesc').value = orgDesc;
-                    document.getElementById('editPresident').value = president;
-                    document.getElementById('editVicePresident').value = vp;
-                    document.getElementById('editContactEmail').value = email;
-                    
+                    document.getElementById('editOrgName').value = document.getElementById('orgName').textContent;
+                    document.getElementById('editOrgDesc').value = document.getElementById('orgDescription').textContent;
+                    document.getElementById('editPresident').value = document.getElementById('orgPresident').textContent;
+                    document.getElementById('editContactEmail').value = document.getElementById('contactEmail').textContent;
+
                     document.getElementById('editModal').style.display = 'flex';
                 }
 
@@ -284,38 +245,29 @@
                     const newName = document.getElementById('editOrgName').value;
                     const newDesc = document.getElementById('editOrgDesc').value;
                     const newPresident = document.getElementById('editPresident').value;
-                    const newVP = document.getElementById('editVicePresident').value;
                     const newEmail = document.getElementById('editContactEmail').value;
-                    
-                    if (!newName.trim() || !newDesc.trim() || !newPresident.trim() || !newVP.trim() || !newEmail.trim()) {
+
+                    if (!newName.trim() || !newDesc.trim() || !newPresident.trim() || !newEmail.trim()) {
                         alert('All fields are required!');
                         return;
                     }
-                    
+
                     if (!newEmail.includes('@')) {
                         alert('Please enter a valid email address');
                         return;
                     }
-                    
-                    document.getElementById('orgName').textContent = escapeHtml(newName);
-                    document.getElementById('orgDescription').textContent = escapeHtml(newDesc);
-                    document.getElementById('orgPresident').textContent = escapeHtml(newPresident);
-                    document.getElementById('orgVP').textContent = escapeHtml(newVP);
-                    document.getElementById('contactEmail').textContent = escapeHtml(newEmail);
-                    
+
+                    document.getElementById('orgName').textContent = newName;
+                    document.getElementById('orgDescription').textContent = newDesc;
+                    document.getElementById('orgPresident').textContent = newPresident;
+                    document.getElementById('contactEmail').textContent = newEmail;
+
                     closeEditModal();
-                    
-                    // In a real app, you would save to backend here
                     alert('Profile updated successfully! (Changes are for demo only)');
                 }
 
                 function managePosts() {
-                    const userInfo = AuthGuard.getCurrentUser();
-                    if (userInfo && userInfo.isLoggedIn) {
-                        window.location.href = "/org1";
-                    } else {
-                        window.location.href = "/login";
-                    }
+                    window.location.href = "/org1";
                 }
 
                 function viewAnalytics() {
@@ -336,6 +288,10 @@
 
                 function downloadReports() {
                     alert('Downloading organization reports...');
+                }
+
+                function logout() {
+                    window.location.href = "/logout";
                 }
 
                 window.addEventListener('click', function(event) {

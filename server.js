@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const session = require("express-session");
 
 const collection = require("./config"); // user schema
 
@@ -13,8 +14,13 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(session({
+  secret: "orgspace-secret-key",
+  resave: false,
+  saveUninitialized: false
+}));
 
+app.use(express.static(path.join(__dirname, "public")));
 
 // ======================
 // COMMENT SCHEMA
@@ -120,16 +126,73 @@ app.get("/reviews5", (req, res) => {
 // PROFILE PAGES
 // ======================
 
-app.get("/profile-student", (req, res) => {
-  res.render("profile-student");
+app.get("/profile-student", async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
+    if (req.session.user.userType !== "student") {
+      return res.send("Access denied.");
+    }
+
+    const user = await collection.findById(req.session.user.id);
+
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    res.render("profile-student", { user });
+  } catch (error) {
+    console.error("PROFILE STUDENT ERROR:", error);
+    res.status(500).send("Error loading student profile.");
+  }
 });
 
-app.get("/profile-organization", (req, res) => {
-  res.render("profile-organization");
+app.get("/profile-organization", async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
+    if (req.session.user.userType !== "organization") {
+      return res.send("Access denied.");
+    }
+
+    const user = await collection.findById(req.session.user.id);
+
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    res.render("profile-organization", { user });
+  } catch (error) {
+    console.error("PROFILE ORGANIZATION ERROR:", error);
+    res.status(500).send("Error loading organization profile.");
+  }
 });
 
-app.get("/profile-admin", (req, res) => {
-  res.render("profile-admin");
+app.get("/profile-admin", async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
+    if (req.session.user.userType !== "admin") {
+      return res.send("Access denied.");
+    }
+
+    const user = await collection.findById(req.session.user.id);
+
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    res.render("profile-admin", { user });
+  } catch (error) {
+    console.error("PROFILE ADMIN ERROR:", error);
+    res.status(500).send("Error loading admin profile.");
+  }
 });
 
 
@@ -143,7 +206,6 @@ app.get("/register", (req, res) => {
 
 app.post("/register", async (req, res) => {
   try {
-
     const {
       email,
       password,
@@ -176,7 +238,6 @@ app.post("/register", async (req, res) => {
     let data;
 
     if (userType === "student") {
-
       data = {
         email,
         password: hashedPassword,
@@ -186,9 +247,7 @@ app.post("/register", async (req, res) => {
         studentId,
         college
       };
-
     } else if (userType === "organization") {
-
       data = {
         email,
         password: hashedPassword,
@@ -196,7 +255,6 @@ app.post("/register", async (req, res) => {
         orgName,
         description
       };
-
     } else {
       return res.send("Invalid user type.");
     }
@@ -204,12 +262,9 @@ app.post("/register", async (req, res) => {
     await collection.create(data);
 
     res.redirect("/login");
-
   } catch (error) {
-
     console.error("REGISTER ERROR:", error);
     res.status(500).send("Error registering user.");
-
   }
 });
 
@@ -220,7 +275,6 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   try {
-
     const { email, password, userType } = req.body;
 
     const user = await collection.findOne({ email });
@@ -239,24 +293,23 @@ app.post("/login", async (req, res) => {
       return res.render("login", { error: "User type does not match this account." });
     }
 
+    req.session.user = {
+      id: user._id,
+      userType: user.userType
+    };
+
     if (user.userType === "student") {
       return res.redirect("/profile-student");
-    } 
-    else if (user.userType === "organization") {
+    } else if (user.userType === "organization") {
       return res.redirect("/profile-organization");
-    } 
-    else if (user.userType === "admin") {
+    } else if (user.userType === "admin") {
       return res.redirect("/profile-admin");
-    } 
-    else {
+    } else {
       return res.render("login", { error: "Invalid user type." });
     }
-
   } catch (error) {
-
     console.error("LOGIN ERROR:", error);
     res.render("login", { error: "Error logging in." });
-
   }
 });
 
@@ -290,6 +343,20 @@ app.post("/add-comment", async (req, res) => {
 
 });
 
+// ======================
+// LOGOUT
+// ======================
+
+app.get("/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      console.error("LOGOUT ERROR:", error);
+      return res.redirect("/");
+    }
+
+    res.redirect("/login");
+  });
+});
 
 // ======================
 // SERVER
