@@ -54,6 +54,10 @@ const commentSchema = new mongoose.Schema({
     type: String
   },
 
+  post: {
+    type:String
+  },
+
   createdAt: {
     type: Date,
     default: Date.now
@@ -354,7 +358,7 @@ app.post("/add-comment", async (req, res) => {
 
     await newComment.save();
 
-    res.redirect("back");
+    res.redirect(req.get("referer") || "/");
 
   } catch (error) {
 

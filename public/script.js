@@ -327,6 +327,20 @@ const canManagePosts =
 
 let displayName = "Guest";
 
+document.querySelectorAll(".org-post").forEach(post => {
+    const addCommentBox = post.querySelector(".add-comment");
+    const warning = post.querySelector(".login-warning");
+
+    if (isLoggedIn) {
+        addCommentBox?.classList.remove("hidden");
+        warning?.classList.add("hidden");
+    } else {
+        addCommentBox?.classList.add("hidden");
+        warning?.classList.remove("hidden");
+    }
+});
+
+
 if (isLoggedIn && session.user) {
     if (userRole === "student") {
         displayName = `${session.user.firstName} ${session.user.lastName}`;
@@ -477,47 +491,6 @@ if (isLoggedIn && session.user) {
 
     document.querySelectorAll(".comment").forEach(applyCommentPermissions);
     
-    document.querySelectorAll(".org-post").forEach(post => {
-        const addCommentBox = post.querySelector(".add-comment");
-        const warning = post.querySelector(".login-warning");
-        const submitBtn = post.querySelector(".submit-comment");
-        const textarea = post.querySelector(".comment-input");
-        const commentsContainer = post.querySelector(".comments");
-
-        // visibility
-        if (isLoggedIn) {
-            addCommentBox?.classList.remove("hidden");
-            warning?.classList.add("hidden");
-        } else {
-            addCommentBox?.classList.add("hidden");
-            warning?.classList.remove("hidden");
-        }
-
-        // submit comment
-        submitBtn?.addEventListener("click", () => {
-            const text = textarea.value.trim();
-            if (!text) return;
-
-            const comment = document.createElement("div");
-            comment.className = "comment";
-            comment.dataset.owner = currentUser;
-
-            comment.innerHTML = `
-                <strong>${displayName}</strong>
-                <p class="comment-text">${text}</p>
-                <div class="comment-actions hidden">
-                    <button class="edit-comment-btn">Edit</button>
-                    <button class="delete-comment-btn">Delete</button>
-                </div>
-            `;
-
-            commentsContainer.appendChild(comment);
-            textarea.value = "";
-
-            applyCommentPermissions(comment);
-        });
-    });
-
     //create post
     const createBtn = document.getElementById("create-post-btn");
     const modal = document.getElementById("create-post-modal");
