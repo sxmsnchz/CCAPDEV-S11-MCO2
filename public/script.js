@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const isLoggedIn = session.isLoggedIn;
     const userRole = session.userType;
-    const currentUser = session.user?.email || null;
+    const currentUser = session.user?.id || null;
 
     const pageOrg = document.body.dataset.org;
 
@@ -55,6 +55,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             warning?.classList.remove("hidden");
         }
     });
+
+    document.querySelectorAll(".edit-comment-btn").forEach(btn => {
+
+  btn.addEventListener("click", () => {
+
+    const comment = btn.closest(".comment");
+
+    const text = comment.querySelector(".comment-text");
+    const form = comment.querySelector(".edit-comment-form");
+
+    text.classList.toggle("hidden");
+    form.classList.toggle("hidden");
+
+  });
+
+});
+
 
     // Lightbox
     const lightbox = document.getElementById("js-lightbox");
@@ -164,37 +181,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.querySelectorAll(".org-post").forEach(applyPostLogic);
-
-    function applyCommentPermissions(comment) {
-        const owner = comment.dataset.owner;
-        const actions = comment.querySelector(".comment-actions");
-        const editBtn = comment.querySelector(".edit-comment-btn");
-        const deleteBtn = comment.querySelector(".delete-comment-btn");
-        const text = comment.querySelector(".comment-text");
-
-        if (!actions) return;
-
-        actions.classList.add("hidden");
-
-        if (isLoggedIn && (owner === currentUser || userRole === "admin")) {
-            actions.classList.remove("hidden");
-        }
-
-        editBtn?.addEventListener("click", () => {
-            const editing = text.isContentEditable;
-            text.contentEditable = !editing;
-            editBtn.textContent = editing ? "Edit" : "Save";
-            text.classList.toggle("editing");
-        });
-
-        deleteBtn?.addEventListener("click", () => {
-            if (confirm("Delete this comment?")) {
-                comment.remove();
-            }
-        });
-    }
-
-    document.querySelectorAll(".comment").forEach(applyCommentPermissions);
 
     const createBtn = document.getElementById("create-post-btn");
     const modal = document.getElementById("create-post-modal");

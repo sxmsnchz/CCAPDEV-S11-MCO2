@@ -177,38 +177,54 @@
                                 **Walk-ins are allowed for limited slots only. <br>
                                 As per CSO-PNP Approved: OPA-03116
                             </div>
+
                             <button class="comment-toggle">View comments</button>
                             <div class="comments hidden">
                             <% const post3Comments = comments.filter(c => c.post === "post3" && c.page == "org1"); %>
                                 <% if (post3Comments.length > 0) { %>
                                     <% post3Comments.forEach(comment => { %>
-                                    <div class="comment">
+                                    <div class="comment" data-owner="<%= comment.user?._id %>">
+
                                         <div class="comment-header">
-                                            <strong>
-                                                <%= comment.user ? (comment.user.firstName + " " + comment.user.lastName) : "User" %>
-                                            </strong>
-
-                                            <% if (user && comment.user && (comment.user._id.toString() === user.id || user.userType === "admin")) { %>
-                                            <div class="comment-actions">
-
-                                                <button class="edit-comment-btn">Edit</button>
-
-                                                <form action="/delete-comment/<%= comment._id %>" method="POST">
-                                                    <button type="submit" class="delete-comment-btn">Delete</button>
-                                                </form>
-
-                                            </div>
+                                        <strong>
+                                          <% if (comment.user) { %>
+                                            <% if (comment.user.userType === "admin") { %>
+                                              Admin
+                                            <% } else if (comment.user.userType === "organization") { %>
+                                              <%= comment.user.orgName %>
+                                            <% } else { %>
+                                              <%= comment.user.firstName %> <%= comment.user.lastName %>
                                             <% } %>
+                                          <% } else { %>
+                                            User
+                                          <% } %>
+                                          </strong>
+
+                                        <% if (user && (user.userType === "admin" || (comment.user && comment.user._id == user.id))) { %>
+
+
+                                        <div class="comment-actions">
+
+                                          <button class="edit-comment-btn">Edit</button>
+
+                                          <form action="/delete-comment/<%= comment._id %>" method="POST">
+                                            <button type="submit" class="delete-comment-btn">Delete</button>
+                                          </form>
+
                                         </div>
 
-                                        <p class="comment-text"><%= comment.text %></p>
+                                        <% } %>
+                                      </div>
 
-                                        <form action="/edit-comment/<%= comment._id %>" method="POST" class="edit-comment-form hidden">
-                                            <input type="text" name="text" value="<%= comment.text %>" required>
-                                            <button type="submit">Save</button>
-                                        </form>
+                                      <p class="comment-text"><%= comment.text %></p>
+
+                                      <form action="/edit-comment/<%= comment._id %>" method="POST" class="edit-comment-form hidden">
+                                        <input type="text" name="text" value="<%= comment.text %>" required>
+                                        <button type="submit">Save</button>
+                                      </form>
 
                                     </div>
+
 
                                 <% }) %>
                             <% } else { %>
@@ -227,7 +243,6 @@
                             <% } %>
 
                             </div>
-
 
                         </article>
 
@@ -268,16 +283,55 @@
                             <% const post2Comments = comments.filter(c => c.post === "post2" && c.page == "org1"); %>
                                 <% if (post2Comments.length > 0) { %>
                                     <% post2Comments.forEach(comment => { %>
-                                    <div class="comment">
-                                        <strong><%= comment.user ? comment.user.email : "User" %></strong>
-                                        <p class="comment-text"><%= comment.text %></p>
+                                    <div class="comment" data-owner="<%= comment.user?._id %>">
+
+                                        <div class="comment-header">
+                                        <strong>
+                                          <% if (comment.user) { %>
+                                            <% if (comment.user.userType === "admin") { %>
+                                              Admin
+                                            <% } else if (comment.user.userType === "organization") { %>
+                                              <%= comment.user.orgName %>
+                                            <% } else { %>
+                                              <%= comment.user.firstName %> <%= comment.user.lastName %>
+                                            <% } %>
+                                          <% } else { %>
+                                            User
+                                          <% } %>
+                                          </strong>
+
+                                        <% if (user && (user.userType === "admin" || (comment.user && comment.user._id == user.id))) { %>
+
+
+                                        <div class="comment-actions">
+
+                                          <button class="edit-comment-btn">Edit</button>
+
+                                          <form action="/delete-comment/<%= comment._id %>" method="POST">
+                                            <button type="submit" class="delete-comment-btn">Delete</button>
+                                          </form>
+
+                                        </div>
+
+                                        <% } %>
+                                      </div>
+
+                                      <p class="comment-text"><%= comment.text %></p>
+
+                                      <form action="/edit-comment/<%= comment._id %>" method="POST" class="edit-comment-form hidden">
+                                        <input type="text" name="text" value="<%= comment.text %>" required>
+                                        <button type="submit">Save</button>
+                                      </form>
+
                                     </div>
+
+
                                 <% }) %>
                             <% } else { %>
                             <p>No comments yet.</p>
                             <% } %>
 
-                           <% if (user) { %>
+                            <% if (user) { %>
                             <form action="/add-comment" method="POST" class="add-comment">
                             <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
                             <input type="hidden" name="page" value="org1">
@@ -327,15 +381,53 @@
                                 As per CSO-PNP Approved: OPA-02320
                             </div>
 
-                            <button class="comment-toggle">View comments</button>
+                           <button class="comment-toggle">View comments</button>
                             <div class="comments hidden">
                             <% const post1Comments = comments.filter(c => c.post === "post1" && c.page == "org1"); %>
                                 <% if (post1Comments.length > 0) { %>
                                     <% post1Comments.forEach(comment => { %>
-                                    <div class="comment">
-                                        <strong><%= comment.user ? comment.user.email : "User" %></strong>
-                                        <p class="comment-text"><%= comment.text %></p>
+                                    <div class="comment" data-owner="<%= comment.user?._id %>">
+
+                                        <div class="comment-header">
+                                        <strong>
+                                          <% if (comment.user) { %>
+                                            <% if (comment.user.userType === "admin") { %>
+                                              Admin
+                                            <% } else if (comment.user.userType === "organization") { %>
+                                              <%= comment.user.orgName %>
+                                            <% } else { %>
+                                              <%= comment.user.firstName %> <%= comment.user.lastName %>
+                                            <% } %>
+                                          <% } else { %>
+                                            User
+                                          <% } %>
+                                          </strong>
+
+                                        <% if (user && (user.userType === "admin" || (comment.user && comment.user._id == user.id))) { %>
+
+                                        <div class="comment-actions">
+
+                                          <button class="edit-comment-btn">Edit</button>
+
+                                          <form action="/delete-comment/<%= comment._id %>" method="POST">
+                                            <button type="submit" class="delete-comment-btn">Delete</button>
+                                          </form>
+
+                                        </div>
+
+                                        <% } %>
+                                      </div>
+
+                                      <p class="comment-text"><%= comment.text %></p>
+
+                                      <form action="/edit-comment/<%= comment._id %>" method="POST" class="edit-comment-form hidden">
+                                        <input type="text" name="text" value="<%= comment.text %>" required>
+                                        <button type="submit">Save</button>
+                                      </form>
+
                                     </div>
+
+
                                 <% }) %>
                             <% } else { %>
                             <p>No comments yet.</p>
@@ -351,7 +443,9 @@
                             <% } else { %>
                             <p class="login-warning">Log in to add a comment.</p>
                             <% } %>
+
                             </div>
+
 
                         </article>
 

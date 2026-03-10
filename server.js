@@ -71,9 +71,6 @@ const Comment = mongoose.model("comments", commentSchema);
 // ROUTES
 // ======================
 
-app.get("/", (req, res) => {
-  res.render("index");
-});
 
 app.get("/login", (req, res) => {
   res.render("login", { error: null });
@@ -457,6 +454,212 @@ app.post("/edit-profile/organization", async (req, res) => {
     });
   }
 });
+
+app.delete("/admin/delete-user/:id", async (req, res) => {
+  try {
+
+    if (!req.session.user || req.session.user.userType !== "admin") {
+      return res.status(403).json({ success: false });
+    }
+
+    await collection.findByIdAndDelete(req.params.id);
+
+    res.json({ success: true });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+});
+
+app.get("/admin/users", async (req, res) => {
+
+  if (!req.session.user || req.session.user.userType !== "admin") {
+    return res.status(403).json([]);
+  }
+
+  const users = await collection.find();
+  res.json(users);
+
+});
+app.get("/admin/stats", async (req, res) => {
+
+  try {
+
+    if (!req.session.user || req.session.user.userType !== "admin") {
+      return res.status(403).json({});
+    }
+
+    const totalUsers = await collection.countDocuments();
+
+    const totalOrgs = await collection.countDocuments({
+      userType: "organization"
+    });
+
+    const totalPosts = await Comment.countDocuments();
+
+    res.json({
+      totalUsers,
+      totalOrgs,
+      totalPosts
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({});
+  }
+
+});
+
+app.get("/admin/activities", async (req, res) => {
+
+  if (!req.session.user || req.session.user.userType !== "admin") {
+    return res.status(403).json([]);
+  }
+
+  const recentUsers = await collection
+    .find()
+    .sort({ _id: -1 })
+    .limit(3);
+
+  const recentComments = await Comment
+    .find()
+    .populate("user")
+    .sort({ createdAt: -1 })
+    .limit(3);
+
+  const activities = [];
+
+  recentUsers.forEach(u => {
+    activities.push({
+      user: u.email,
+      activity: "Registered",
+      time: "Recently"
+    });
+  });
+
+  recentComments.forEach(c => {
+    activities.push({
+      user: c.user?.email || "User",
+      activity: "Posted a comment",
+      time: "Recently"
+    });
+  });
+
+  res.json(activities.slice(0,5));
+
+});
+
+app.post("/change-password", async (req, res) => {
+
+  try {
+
+    if (!req.session.user) {
+      return res.status(401).json({ success: false });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await collection.findById(req.session.user.id);
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    const match = await bcrypt.compare(currentPassword, user.password);
+
+    if (!match) {
+      return res.json({ success: false, message: "Current password incorrect" });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashed;
+    await user.save();
+
+    res.json({ success: true });
+
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({ success: false });
+
+  }
+
+});
+
+app.get("/org/posts-count/:page", async (req, res) => {
+
+  try {
+
+    const page = req.params.page;
+
+    const count = await Comment.countDocuments({
+      page: page
+    });
+
+    res.json({ count });
+
+  } catch (error) {
+
+    console.error(error);
+    res.json({ count: 0 });
+
+  }
+
+});
+
+app.get("/org/:orgName", async (req, res) => {
+
+  try {
+
+    const orgName = req.params.orgName;
+
+    const org = await collection.findOne({
+      orgName: orgName
+    });
+
+    if (!org) {
+      return res.send("Organization not found");
+    }
+
+    const comments = await Comment.find({
+      page: orgName
+    }).populate("user");
+
+    const postsCount = await Comment.countDocuments({
+      page: orgName
+    });
+
+    res.render("org", {
+      org,
+      comments,
+      postsCount
+    });
+
+  } catch (error) {
+
+    console.error(error);
+    res.send("Error loading organization");
+
+  }
+
+});
+
+app.get("/", async (req, res) => {
+
+  const orgs = await collection.find({ userType: "organization" });
+
+  res.render("index", {
+    user: req.session.user,
+    orgs: orgs
+  });
+
+
+});
+
+
+
 
 // ======================
 // ADD COMMENT

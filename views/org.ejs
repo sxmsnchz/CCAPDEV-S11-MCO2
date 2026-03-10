@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title><%= org ? org.orgName : "Organization" %> - OrgSpace</title>
+    <link rel="stylesheet" href="/style.css">
+    </head>
+
+    <body>
+
+    <main>
+
+    <%= org?.orgName || "" %>
+    <%= org?.tagline || "" %>
+    <%= org?.description || "" %>
+    <%= org?.president || "" %>
+    <%= org?.email || "" %>
+    <%= org?.orgType || "" %>
+
+    <hr>
+
+    <h3>Posts (<%= postsCount %>)</h3>
+
+    <form action="/add-comment" method="POST">
+
+    <input type="hidden" name="page" value="<%= org.orgName %>">
+    <input type="hidden" name="postId" value="post1">
+
+    <textarea name="text" placeholder="Write a comment..." required></textarea>
+
+    <button type="submit">Post</button>
+
+    </form>
+
+    <hr>
+
+    <% (comments || []).forEach(comment => { %>
+
+    <div style="margin-bottom:15px;">
+
+    <strong>
+
+    <% if (comment.user.userType === "organization") { %>
+    <%= comment.user.orgName %>
+    <% } else { %>
+    <%= comment.user.firstName %> <%= comment.user.lastName %>
+    <% } %>
+
+    </strong>
+
+    <p><%= comment.text %></p>
+
+    </div>
+
+    <% }) %>
+
+    </main>
+
+    </body>
+</html>

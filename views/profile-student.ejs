@@ -40,7 +40,6 @@
                         <div class="profile-actions">
                             <button onclick="editProfile()" class="btn-action">✏️ Edit Profile</button>
                             <button onclick="viewOrganizations()" class="btn-action">🏢 Browse Organizations</button>
-                            <button onclick="viewEvents()" class="btn-action">📅 View Events</button>
                         </div>
                     </div>
                 </div>
@@ -113,13 +112,7 @@
                 </div>
 
                 <div style="background: #e9f5e9; padding: 25px; border-radius: 14px; border: 2px solid #046307; margin-top: 30px;">
-                    <h3 style="color: #046307; margin-bottom: 15px;">Quick Actions</h3>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <button onclick="browseOrganizations()" class="btn-action">🏢 Browse Organizations</button>
-                        <button onclick="viewCalendar()" class="btn-action">📅 View Event Calendar</button>
-                        <button onclick="viewMessages()" class="btn-action">💬 View Messages</button>
-                        <button onclick="viewNotifications()" class="btn-action">🔔 Notifications</button>
-                    </div>
+ 
                 </div>
             </div>
 
@@ -290,10 +283,36 @@
                 function browseOrganizations() {
                     window.location.href = "/#organizations";
                 }
+                
+                async function changePassword() {
 
-                function changePassword() {
-                    alert('Change password feature coming soon!');
+                  const currentPassword = prompt("Enter current password:");
+                  if (!currentPassword) return;
+
+                  const newPassword = prompt("Enter new password:");
+                  if (!newPassword) return;
+
+                  const res = await fetch("/change-password", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                      currentPassword,
+                      newPassword
+                    })
+                  });
+
+                  const data = await res.json();
+
+                  if (data.success) {
+                    alert("Password changed successfully!");
+                  } else {
+                    alert(data.message || "Error changing password");
+                  }
+
                 }
+
 
                 function viewCalendar() {
                     alert('Opening event calendar...');

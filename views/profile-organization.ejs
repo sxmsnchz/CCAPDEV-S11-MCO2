@@ -99,14 +99,7 @@
                 </div>
 
                 <div style="background: #e9f5e9; padding: 25px; border-radius: 14px; border: 2px solid #046307; margin-top: 30px;">
-                    <h3 style="color: #046307; margin-bottom: 15px;">Quick Actions</h3>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <button onclick="createNewPost()" class="btn-action">📢 Create New Post</button>
-                        <button onclick="manageEvents()" class="btn-action">📅 Manage Events</button>
-                        <button onclick="viewMembers()" class="btn-action">👥 View All Members</button>
-                        <button onclick="downloadReports()" class="btn-action">📊 Download Reports</button>
-                        <button onclick="logout()" class="btn-action" style="background: #f44336;">🚪 Logout</button>
-                    </div>
+                
                 </div>
             </div>
 
@@ -172,6 +165,7 @@
 
                     const userData = JSON.parse(document.getElementById('user-json').textContent || "{}");
                     initializeProfile(userData);
+                    loadPostCount();
                 });
 
                 function initializeProfile(user) {
@@ -187,7 +181,7 @@
                         logo: currentOrgUser.logo || "/assets/default-org.png",
                         membersCount: currentOrgUser.membersCount || 150,
                         eventsCount: currentOrgUser.eventsCount || 3,
-                        postsCount: currentOrgUser.postsCount || 3,
+                        postsCount: 0,
                         socialMedia: currentOrgUser.socialMedia || {
                             facebook: "facebook.com/DLSUAU",
                             twitter: "@archersforunicef",
@@ -348,6 +342,18 @@
                         closeEditModal();
                     }
                 });
+
+                async function loadPostCount() {
+
+                const page = window.location.pathname.replace("/", "");
+                fetch(`/org/posts-count/${page}`)
+
+                const data = await res.json();
+
+                document.getElementById("postsCount").textContent = data.count;
+
+                }
+
             </script>
         </main>
     </body>

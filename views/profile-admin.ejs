@@ -139,16 +139,6 @@
                     </div>
                 </div>
 
-                <h3 style="color: #0B3D0B; margin-bottom: 20px;">⚡ Quick Actions</h3>
-                <div class="quick-actions-grid">
-                    <button onclick="addNewUser()" class="quick-action-btn">👤 Add New User</button>
-                    <button onclick="createAnnouncement()" class="quick-action-btn">📢 Create System Announcement</button>
-                    <button onclick="backupDatabase()" class="quick-action-btn">💾 Backup Database</button>
-                    <button onclick="generateReports()" class="quick-action-btn">📊 Generate Reports</button>
-                    <button onclick="managePermissions()" class="quick-action-btn">🔐 Manage Permissions</button>
-                    <button onclick="systemSettings()" class="quick-action-btn">⚙️ System Settings</button>
-                    <button onclick="logout()" class="quick-action-btn" style="background: #f44336;">🚪 Logout</button>
-                </div>
             </div>
 
             <div id="loadingMessage" style="text-align: center; padding: 50px;">
@@ -168,6 +158,9 @@
 
                     const userData = JSON.parse(document.getElementById('user-json').textContent);
                     initializeAdminDashboard(userData);
+                    loadUsers();
+                    loadAdminStats();
+                    loadActivities();
                 });
 
                 function initializeAdminDashboard(user) {
@@ -193,14 +186,7 @@
                             { user: "Admin", activity: "Approved organization", time: "09:30 AM" },
                             { user: "LSCS", activity: "Posted announcement", time: "09:15 AM" }
                         ],
-                        users: [
-                            { id: 1, name: "Juan Dela Cruz", email: "juan.delacruz@dlsu.edu.ph", role: "Student" },
-                            { id: 2, name: "Maria Santos", email: "maria.santos@dlsu.edu.ph", role: "Student" },
-                            { id: 3, name: "John Lim", email: "john.lim@dlsu.edu.ph", role: "Student" },
-                            { id: 4, name: "CodeDH", email: "codedh@dlsu.edu.ph", role: "Organization" },
-                            { id: 5, name: "Archers for UNICEF", email: "au@dlsu.edu.ph", role: "Organization" },
-                            { id: 6, name: "LSCS", email: "lscs@dlsu.edu.ph", role: "Organization" }
-                        ]
+
                     };
 
                     document.getElementById('adminEmailDisplay').textContent = adminData.adminEmail;
@@ -239,23 +225,6 @@
                         `;
                         activitiesTable.appendChild(row);
                     });
-
-                    const usersTable = document.getElementById('usersTable');
-                    usersTable.innerHTML = "";
-
-                    adminData.users.forEach(userItem => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${escapeHtml(userItem.name)}</td>
-                            <td>${escapeHtml(userItem.email)}</td>
-                            <td><span class="tag">${escapeHtml(userItem.role)}</span></td>
-                            <td class="admin-actions">
-                                <button onclick="editUser(${userItem.id})" class="btn-admin btn-edit">Edit</button>
-                                <button onclick="deleteUser(${userItem.id})" class="btn-admin btn-delete">Delete</button>
-                            </td>
-                        `;
-                        usersTable.appendChild(row);
-                    });
                 }
 
                 function escapeHtml(text) {
@@ -281,10 +250,23 @@
                     alert(`Editing user ${id}...`);
                 }
 
-                function deleteUser(id) {
-                    if (confirm('Are you sure you want to delete this user?')) {
-                        alert(`User ${id} deleted!`);
-                    }
+                async function deleteUser(id) {
+
+                  if (!confirm("Delete this user?")) return;
+
+                  const res = await fetch(`/admin/delete-user/${id}`, {
+                    method: "DELETE"
+                  });
+
+                  const data = await res.json();
+
+                  if (data.success) {
+                    alert("User deleted");
+                    location.reload();
+                  } else {
+                    alert("Error deleting user");
+                  }
+
                 }
 
                 function viewSystemLogs() {
@@ -318,6 +300,81 @@
                 function logout() {
                     window.location.href = "/logout";
                 }
+
+                    async function loadUsers() {
+
+                        const res = await fetch("/admin/users");
+                        const users = await res.json();
+
+                          const usersTable = document.getElementById("usersTable");
+                          usersTable.innerHTML = "";
+
+                          users.forEach(userItem => {
+
+                            let name = "Admin";
+
+                            if (userItem.userType === "student") {
+                              name = `${userItem.firstName} ${userItem.lastName}`;
+                            }
+
+                            if (userItem.userType === "organization") {
+                              name = userItem.orgName;
+                            }
+
+                            const row = document.createElement("tr");
+
+                            row.innerHTML = `
+                              <td>${name}</td>
+                              <td>${userItem.email}</td>
+                              <td><span class="tag">${userItem.userType}</span></td>
+                              <td class="admin-actions">
+                                <button onclick="deleteUser('${userItem._id}')" class="btn-admin btn-delete">
+                                  Delete
+                                </button>
+                              </td>
+                            `;
+
+                            usersTable.appendChild(row);
+
+                          });
+
+                        }
+
+                        async function loadAdminStats() {
+
+                          const res = await fetch("/admin/stats");
+                          const stats = await res.json();
+
+                          document.getElementById("totalUsers").textContent = stats.totalUsers;
+                          document.getElementById("totalOrgs").textContent = stats.totalOrgs;
+                          document.getElementById("totalPosts").textContent = stats.totalPosts;
+
+                        }
+
+                        async function loadActivities() {
+
+                          const res = await fetch("/admin/activities");
+                          const activities = await res.json();
+
+                          const table = document.getElementById("activitiesTable");
+                          table.innerHTML = "";
+
+                          activities.forEach(a => {
+
+                            const row = document.createElement("tr");
+
+                            row.innerHTML = `
+                              <td>${a.user}</td>
+                              <td>${a.activity}</td>
+                              <td>${a.time}</td>
+                            `;
+
+                            table.appendChild(row);
+
+                          });
+
+                        }
+
             </script>
         </main>
     </body>
