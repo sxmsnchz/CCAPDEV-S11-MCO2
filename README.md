@@ -38,9 +38,14 @@ The database stores information such as:
 
 ## How to Run the Project
 
-1. Clone using "https://github.com/sxmsnchz/CCAPDEV-S11-MCO" or download the zip file
-2. Import and configure database file on MongoDB
-3. You may run webpage on localhost, GitHub pages or on you own method.
+1. Clone the repository from GitHub or download the ZIP file.
+2. Open the project folder in your code editor.
+3. Open the terminal inside the project folder.
+4. Install the required dependencies by running npm install.
+5. Make sure that MongoDB is running locally on your computer.
+6. Run node seed.js to populate the database with the sample users.
+7. Start the application by running node server.js.
+8.  Open your browser and go to http://localhost:3000 to access the website.
 
 ## Contributors
 
@@ -53,3 +58,4 @@ The database stores information such as:
 ## Notes
 
 This project was developed for academic purposes and is not yet an official school system.
+This project uses a local MongoDB database during development. The database is automatically populated with test accounts using the seed.js file.
