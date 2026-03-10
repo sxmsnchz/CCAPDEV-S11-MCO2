@@ -301,9 +301,17 @@ const AuthGuard = {
 };
 
 //FOR ORG PAGE
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-const session = auth.getCurrentUser();
+let session = { isLoggedIn: false };
+
+async function checkSession() {
+  const res = await fetch("/session");
+  session = await res.json();
+}
+
+await checkSession();
+
 const isLoggedIn = session.isLoggedIn;
 const userRole = session.userType;
 const currentUser = session.user?.email || null;
@@ -661,7 +669,10 @@ const profileMenu = document.getElementById("profileMenu");
 function renderProfileMenu() {
     profileDropdown.innerHTML = "";
 
-    const session = auth.getCurrentUser();
+    fetch("/session")
+    .then(res => res.json())
+    .then(session => {
+
 
     if (session.isLoggedIn) {
         profileDropdown.innerHTML= `
@@ -669,27 +680,26 @@ function renderProfileMenu() {
         <li><button type="button" id="signOutBtn">Sign Out</button></li>
         `;
 
-        document.getElementById("profBtn").addEventListener("click", () => {
-            const session = auth.getCurrentUser();
-            if (!session.isLoggedIn) {
-                window.location.href = "/login";
-                return;
-            }
+    document.getElementById("profBtn").addEventListener("click", () => {
 
-            switch (session.userType) {
-                case "student": 
-                    window.location.href = "/profile-student";
-                    break;
-                case "organization":
-                    window.location.href = "/profile-organization";
-                    break;
-                case "admin":
-                    window.location.href = "/profile-admin";
-                    break;
-                default:
-                    window.location.href = "/"
-            }
-        });
+    switch (session.userType) {
+        case "student":
+            window.location.href = "/profile-student";
+            break;
+
+        case "organization":
+            window.location.href = "/profile-organization";
+            break;
+
+        case "admin":
+            window.location.href = "/profile-admin";
+            break;
+
+        default:
+            window.location.href = "/";
+    }
+
+});
 
         document.getElementById("signOutBtn").addEventListener("click", () => {
             auth.logout();
@@ -702,7 +712,7 @@ function renderProfileMenu() {
         <li><a href="/login">Sign In</a></li>
         `;
     }
-}
+})}; 
 
 function toggleProfileDropdown() {
     profileDropdown.classList.toggle("open");

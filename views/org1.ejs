@@ -190,17 +190,20 @@
                             <% } else { %>
                             <p>No comments yet.</p>
                             <% } %>
-                            </div>
 
-                            <form action="/add-comment" method="POST" class="add-comment hidden">
+                            <% if (user) { %>
+                            <form action="/add-comment" method="POST" class="add-comment">
                             <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
                             <input type="hidden" name="page" value="org1">
-                            <input type="hidden" name="postId" value="post3">
-                            <input type="hidden" name="userId" value="demoUser">
+                            <input type="hidden" name="postId" value="post1">
                             <button type="submit" class="submit-comment">Post</button>
                             </form>
+                            <% } else { %>
+                            <p class="login-warning">Log in to add a comment.</p>
+                            <% } %>
 
-                            <p class="login-warning hidden">Log in to add a comment.</p>
+                            </div>
+
 
                         </article>
 
@@ -249,17 +252,20 @@
                             <% } else { %>
                             <p>No comments yet.</p>
                             <% } %>
-                            </div>
 
-                            <form action="/add-comment" method="POST" class="add-comment hidden">
+                           <% if (user) { %>
+                            <form action="/add-comment" method="POST" class="add-comment">
                             <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
                             <input type="hidden" name="page" value="org1">
-                            <input type="hidden" name="postId" value="post2">
-                            <input type="hidden" name="userId" value="demoUser">
+                            <input type="hidden" name="postId" value="post1">
                             <button type="submit" class="submit-comment">Post</button>
                             </form>
+                            <% } else { %>
+                            <p class="login-warning">Log in to add a comment.</p>
+                            <% } %>
 
-                            <p class="login-warning hidden">Log in to add a comment.</p>
+                            </div>
+
 
                         </article>
 
@@ -310,17 +316,19 @@
                             <% } else { %>
                             <p>No comments yet.</p>
                             <% } %>
-                            </div>
 
-                            <form action="/add-comment" method="POST" class="add-comment hidden">
+                            <% if (user) { %>
+                            <form action="/add-comment" method="POST" class="add-comment">
                             <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
                             <input type="hidden" name="page" value="org1">
                             <input type="hidden" name="postId" value="post1">
-                            <input type="hidden" name="userId" value="demoUser">
                             <button type="submit" class="submit-comment">Post</button>
                             </form>
+                            <% } else { %>
+                            <p class="login-warning">Log in to add a comment.</p>
+                            <% } %>
+                            </div>
 
-                            <p class="login-warning hidden">Log in to add a comment.</p>
                         </article>
 
                     </div>

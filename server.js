@@ -20,6 +20,19 @@ app.use(session({
   saveUninitialized: false
 }));
 
+app.use((req, res, next) => {
+  res.locals.user = req.session.user;
+  next();
+});
+
+app.get("/session", (req, res) => {
+  res.json({
+    isLoggedIn: !!req.session.user,
+    userType: req.session.user?.userType || null,
+    user: req.session.user || null
+  });
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 // ======================
@@ -272,9 +285,9 @@ app.post("/register", async (req, res) => {
 // ======================
 // LOGIN
 // ======================
-
 app.post("/login", async (req, res) => {
   try {
+
     const { email, password, userType } = req.body;
 
     const user = await collection.findOne({ email });
@@ -298,20 +311,28 @@ app.post("/login", async (req, res) => {
       userType: user.userType
     };
 
-    if (user.userType === "student") {
-      return res.redirect("/profile-student");
-    } else if (user.userType === "organization") {
-      return res.redirect("/profile-organization");
-    } else if (user.userType === "admin") {
-      return res.redirect("/profile-admin");
-    } else {
-      return res.render("login", { error: "Invalid user type." });
-    }
+    req.session.save(() => {
+
+      if (user.userType === "student") {
+        return res.redirect("/profile-student");
+      }
+
+      if (user.userType === "organization") {
+        return res.redirect("/profile-organization");
+      }
+
+      if (user.userType === "admin") {
+        return res.redirect("/profile-admin");
+      }
+
+    });
+
   } catch (error) {
     console.error("LOGIN ERROR:", error);
     res.render("login", { error: "Error logging in." });
   }
 });
+
 
 
 // ======================
@@ -322,12 +343,13 @@ app.post("/add-comment", async (req, res) => {
 
   try {
 
-    const { text, userId, page } = req.body;
+    const { text, page, postId } = req.body;
 
     const newComment = new Comment({
       text,
-      user: userId,
-      page
+      user: req.session.user.id,
+      page,
+      post: postId
     });
 
     await newComment.save();
