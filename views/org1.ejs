@@ -183,24 +183,27 @@
                                 <% if (post3Comments.length > 0) { %>
                                     <% post3Comments.forEach(comment => { %>
                                     <div class="comment">
-                                        <strong> <%= comment.user ? (comment.user.firstName + " " + comment.user.lastName) : "User" %> </strong>
+                                        <strong><%= comment.user ? comment.user.email : "User" %></strong>
                                         <p class="comment-text"><%= comment.text %></p>
                                     </div>
                                 <% }) %>
                             <% } else { %>
                             <p>No comments yet.</p>
                             <% } %>
-                            </div>
 
-                            <form action="/add-comment" method="POST" class="add-comment hidden">
+                            <% if (user) { %>
+                            <form action="/add-comment" method="POST" class="add-comment">
                             <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
                             <input type="hidden" name="page" value="org1">
-                            <input type="hidden" name="postId" value="post3">
-                            <input type="hidden" name="userId" value="demoUser">
+                            <input type="hidden" name="postId" value="post1">
                             <button type="submit" class="submit-comment">Post</button>
                             </form>
+                            <% } else { %>
+                            <p class="login-warning">Log in to add a comment.</p>
+                            <% } %>
 
-                            <p class="login-warning hidden">Log in to add a comment.</p>
+                            </div>
+
 
                         </article>
 
@@ -242,24 +245,27 @@
                                 <% if (post2Comments.length > 0) { %>
                                     <% post2Comments.forEach(comment => { %>
                                     <div class="comment">
-                                        <strong> <%= comment.user ? (comment.user.firstName + " " + comment.user.lastName) : "User" %> </strong>
+                                        <strong><%= comment.user ? comment.user.email : "User" %></strong>
                                         <p class="comment-text"><%= comment.text %></p>
                                     </div>
                                 <% }) %>
                             <% } else { %>
                             <p>No comments yet.</p>
                             <% } %>
-                            </div>
 
-                            <form action="/add-comment" method="POST" class="add-comment hidden">
+                           <% if (user) { %>
+                            <form action="/add-comment" method="POST" class="add-comment">
                             <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
                             <input type="hidden" name="page" value="org1">
-                            <input type="hidden" name="postId" value="post2">
-                            <input type="hidden" name="userId" value="demoUser">
+                            <input type="hidden" name="postId" value="post1">
                             <button type="submit" class="submit-comment">Post</button>
                             </form>
+                            <% } else { %>
+                            <p class="login-warning">Log in to add a comment.</p>
+                            <% } %>
 
-                            <p class="login-warning hidden">Log in to add a comment.</p>
+                            </div>
+
 
                         </article>
 
@@ -303,24 +309,26 @@
                                 <% if (post1Comments.length > 0) { %>
                                     <% post1Comments.forEach(comment => { %>
                                     <div class="comment">
-                                        <strong> <%= comment.user ? (comment.user.firstName + " " + comment.user.lastName) : "User" %> </strong>
+                                        <strong><%= comment.user ? comment.user.email : "User" %></strong>
                                         <p class="comment-text"><%= comment.text %></p>
                                     </div>
                                 <% }) %>
                             <% } else { %>
                             <p>No comments yet.</p>
                             <% } %>
-                            </div>
 
-                            <form action="/add-comment" method="POST" class="add-comment hidden">
+                            <% if (user) { %>
+                            <form action="/add-comment" method="POST" class="add-comment">
                             <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
                             <input type="hidden" name="page" value="org1">
                             <input type="hidden" name="postId" value="post1">
-                            <input type="hidden" name="userId" value="demoUser">
                             <button type="submit" class="submit-comment">Post</button>
                             </form>
+                            <% } else { %>
+                            <p class="login-warning">Log in to add a comment.</p>
+                            <% } %>
+                            </div>
 
-                            <p class="login-warning hidden">Log in to add a comment.</p>
                         </article>
 
                     </div>

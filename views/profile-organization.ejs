@@ -114,29 +114,39 @@
                 <p>Loading organization profile...</p>
             </div>
 
-            <div id="editModal" class="modal-overlay">
+            <div id="editModal" class="modal-overlay" style="display: none;">
                 <div class="modal-content">
                     <span class="close-modal" onclick="closeEditModal()">&times;</span>
                     <h2>Edit Organization Profile</h2>
                     <form id="editOrgForm">
                         <div class="form-group">
-                            <label>Organization Name</label>
-                            <input type="text" id="editOrgName">
+                            <label for="editOrgName">Organization Name</label>
+                            <input type="text" id="editOrgName" required>
                         </div>
                         
                         <div class="form-group">
-                            <label>Description</label>
-                            <textarea id="editOrgDesc" rows="4"></textarea>
+                            <label for="editOrgDesc">Description</label>
+                            <textarea id="editOrgDesc" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editTagline">Tagline</label>
+                            <input type="text" id="editTagline">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPresident">President</label>
+                            <input type="text" id="editPresident" required>
                         </div>
                         
                         <div class="form-group">
-                            <label>President</label>
-                            <input type="text" id="editPresident">
+                            <label for="editContactEmail">Contact Email</label>
+                            <input type="email" id="editContactEmail" required>
                         </div>
                         
                         <div class="form-group">
-                            <label>Contact Email</label>
-                            <input type="email" id="editContactEmail">
+                            <label for="editOrgType">Organization Type</label>
+                            <input type="text" id="editOrgType">
                         </div>
                         
                         <div class="form-actions">
@@ -154,33 +164,37 @@
             </script>
 
             <script>
+                let currentOrgUser = {};
+
                 document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('loadingMessage').style.display = 'none';
                     document.getElementById('profileContent').style.display = 'block';
 
-                    const userData = JSON.parse(document.getElementById('user-json').textContent);
+                    const userData = JSON.parse(document.getElementById('user-json').textContent || "{}");
                     initializeProfile(userData);
                 });
 
                 function initializeProfile(user) {
+                    currentOrgUser = user || {};
+
                     const orgData = {
-                        name: user.orgName || "",
-                        tagline: user.tagline || "",
-                        description: user.description || "",
-                        type: user.orgType || "",
-                        contactEmail: user.email || "",
-                        president: user.president || "",
-                        logo: user.logo || "/assets/default-org.png",
-                        membersCount: 150,
-                        eventsCount: 3,
-                        postsCount: 3,
-                        socialMedia: {
+                        name: currentOrgUser.orgName || "",
+                        tagline: currentOrgUser.tagline || "",
+                        description: currentOrgUser.description || "",
+                        type: currentOrgUser.orgType || "",
+                        contactEmail: currentOrgUser.email || "",
+                        president: currentOrgUser.president || "",
+                        logo: currentOrgUser.logo || "/assets/default-org.png",
+                        membersCount: currentOrgUser.membersCount || 150,
+                        eventsCount: currentOrgUser.eventsCount || 3,
+                        postsCount: currentOrgUser.postsCount || 3,
+                        socialMedia: currentOrgUser.socialMedia || {
                             facebook: "facebook.com/DLSUAU",
                             twitter: "@archersforunicef",
                             instagram: "@archersforunicef"
                         },
                         keyMembers: [
-                            { name: user.president || "Organization President", role: "President" },
+                            { name: currentOrgUser.president || "Organization President", role: "President" },
                             { name: "Aiella Evangelista", role: "EVP - Internal Affairs" },
                             { name: "Grace Gonzales", role: "EVP - External Affairs" },
                             { name: "Karll Cueto", role: "EVP - Integrated Marketing Communications" },
@@ -229,10 +243,12 @@
                 }
 
                 function openEditModal() {
-                    document.getElementById('editOrgName').value = document.getElementById('orgName').textContent;
-                    document.getElementById('editOrgDesc').value = document.getElementById('orgDescription').textContent;
-                    document.getElementById('editPresident').value = document.getElementById('orgPresident').textContent;
-                    document.getElementById('editContactEmail').value = document.getElementById('contactEmail').textContent;
+                    document.getElementById('editOrgName').value = currentOrgUser.orgName || '';
+                    document.getElementById('editOrgDesc').value = currentOrgUser.description || '';
+                    document.getElementById('editTagline').value = currentOrgUser.tagline || '';
+                    document.getElementById('editPresident').value = currentOrgUser.president || '';
+                    document.getElementById('editContactEmail').value = currentOrgUser.email || '';
+                    document.getElementById('editOrgType').value = currentOrgUser.orgType || '';
 
                     document.getElementById('editModal').style.display = 'flex';
                 }
@@ -241,29 +257,55 @@
                     document.getElementById('editModal').style.display = 'none';
                 }
 
-                function saveOrgProfile() {
-                    const newName = document.getElementById('editOrgName').value;
-                    const newDesc = document.getElementById('editOrgDesc').value;
-                    const newPresident = document.getElementById('editPresident').value;
-                    const newEmail = document.getElementById('editContactEmail').value;
+                async function saveOrgProfile() {
+                    const orgName = document.getElementById('editOrgName').value.trim();
+                    const description = document.getElementById('editOrgDesc').value.trim();
+                    const tagline = document.getElementById('editTagline').value.trim();
+                    const president = document.getElementById('editPresident').value.trim();
+                    const email = document.getElementById('editContactEmail').value.trim();
+                    const orgType = document.getElementById('editOrgType').value.trim();
 
-                    if (!newName.trim() || !newDesc.trim() || !newPresident.trim() || !newEmail.trim()) {
-                        alert('All fields are required!');
+                    if (!orgName || !description || !president || !email) {
+                        alert('All required fields must be filled in.');
                         return;
                     }
 
-                    if (!newEmail.includes('@')) {
-                        alert('Please enter a valid email address');
-                        return;
+                    try {
+                        const response = await fetch("/edit-profile/organization", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                orgName,
+                                description,
+                                tagline,
+                                president,
+                                email,
+                                orgType
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            currentOrgUser.orgName = orgName;
+                            currentOrgUser.description = description;
+                            currentOrgUser.tagline = tagline;
+                            currentOrgUser.president = president;
+                            currentOrgUser.email = email;
+                            currentOrgUser.orgType = orgType;
+
+                            initializeProfile(currentOrgUser);
+                            closeEditModal();
+                            alert('Organization profile updated successfully!');
+                        } else {
+                            alert(result.message || 'Failed to update organization profile.');
+                        }
+                    } catch (error) {
+                        console.error("Save organization profile error:", error);
+                        alert("Something went wrong while saving the organization profile.");
                     }
-
-                    document.getElementById('orgName').textContent = newName;
-                    document.getElementById('orgDescription').textContent = newDesc;
-                    document.getElementById('orgPresident').textContent = newPresident;
-                    document.getElementById('contactEmail').textContent = newEmail;
-
-                    closeEditModal();
-                    alert('Profile updated successfully! (Changes are for demo only)');
                 }
 
                 function managePosts() {

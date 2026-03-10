@@ -127,26 +127,36 @@
                 <p>Loading student profile...</p>
             </div>
 
-            <div id="editModal" class="modal-overlay">
+            <div id="editModal" class="modal-overlay" style="display: none;">
                 <div class="modal-content">
                     <span class="close-modal" onclick="closeEditModal()">&times;</span>
                     <h2>Edit Student Profile</h2>
                     <form id="editStudentForm">
                         <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" id="editFirstName">
+                            <label for="editFirstName">First Name</label>
+                            <input type="text" id="editFirstName" name="firstName" required>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" id="editLastName">
+                            <label for="editLastName">Last Name</label>
+                            <input type="text" id="editLastName" name="lastName" required>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label>Student ID</label>
-                            <input type="text" id="editStudentId" disabled>
+                            <label for="editEmail">Email</label>
+                            <input type="email" id="editEmail" name="email" required>
                         </div>
-                        
+
+                        <div class="form-group">
+                            <label for="editCollege">College</label>
+                            <input type="text" id="editCollege" name="college" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editStudentId">Student ID</label>
+                            <input type="text" id="editStudentId" name="studentId" disabled>
+                        </div>
+
                         <div class="form-actions">
                             <button type="button" onclick="closeEditModal()" class="btn-secondary">Cancel</button>
                             <button type="button" onclick="saveStudentProfile()" class="btn-primary">Save Changes</button>
@@ -162,27 +172,31 @@
             </script>
 
             <script>
+                let currentUser = {};
+
                 document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('loadingMessage').style.display = 'none';
                     document.getElementById('profileContent').style.display = 'block';
 
-                    const userData = JSON.parse(document.getElementById('user-json').textContent);
-                    initializeProfile(userData);
+                    currentUser = JSON.parse(document.getElementById('user-json').textContent || "{}");
+                    initializeProfile(currentUser);
                 });
 
                 function initializeProfile(user) {
+                    currentUser = user || {};
+
                     const studentData = {
-                        firstName: user.firstName || "",
-                        lastName: user.lastName || "",
-                        studentId: user.studentId || "",
-                        email: user.email || "",
-                        college: user.college || "",
-                        profileImage: user.profileImage || "/assets/default-profile.png",
-                        organizationsJoined: 3,
-                        upcomingEvents: 2,
-                        commentsMade: 15,
-                        lastLogin: "Today, 09:30 AM",
-                        notifications: "Enabled"
+                        firstName: currentUser.firstName || "",
+                        lastName: currentUser.lastName || "",
+                        studentId: currentUser.studentId || "",
+                        email: currentUser.email || "",
+                        college: currentUser.college || "",
+                        profileImage: currentUser.profileImage || "/assets/default-profile.png",
+                        organizationsJoined: currentUser.organizationsJoined || 3,
+                        upcomingEvents: currentUser.upcomingEvents || 2,
+                        commentsMade: currentUser.commentsMade || 15,
+                        lastLogin: currentUser.lastLogin || "Today, 09:30 AM",
+                        notifications: currentUser.notifications || "Enabled"
                     };
 
                     document.getElementById('profileImage').src = studentData.profileImage;
@@ -199,14 +213,11 @@
                 }
 
                 function openEditModal() {
-                    const fullName = document.getElementById('studentName').textContent;
-                    const nameParts = fullName.split(' ');
-                    const firstName = nameParts[0] || '';
-                    const lastName = nameParts.slice(1).join(' ') || '';
-
-                    document.getElementById('editFirstName').value = firstName;
-                    document.getElementById('editLastName').value = lastName;
-                    document.getElementById('editStudentId').value = document.getElementById('studentId').textContent;
+                    document.getElementById('editFirstName').value = currentUser.firstName || '';
+                    document.getElementById('editLastName').value = currentUser.lastName || '';
+                    document.getElementById('editEmail').value = currentUser.email || '';
+                    document.getElementById('editCollege').value = currentUser.college || '';
+                    document.getElementById('editStudentId').value = currentUser.studentId || '';
 
                     document.getElementById('editModal').style.display = 'flex';
                 }
@@ -215,19 +226,49 @@
                     document.getElementById('editModal').style.display = 'none';
                 }
 
-                function saveStudentProfile() {
-                    const firstName = document.getElementById('editFirstName').value;
-                    const lastName = document.getElementById('editLastName').value;
+                async function saveStudentProfile() {
+                    const firstName = document.getElementById('editFirstName').value.trim();
+                    const lastName = document.getElementById('editLastName').value.trim();
+                    const email = document.getElementById('editEmail').value.trim();
+                    const college = document.getElementById('editCollege').value.trim();
 
-                    if (!firstName.trim() || !lastName.trim()) {
+                    if (!firstName || !lastName || !email || !college) {
                         alert('All fields are required!');
                         return;
                     }
 
-                    document.getElementById('studentName').textContent = `${firstName} ${lastName}`;
-                    closeEditModal();
+                    try {
+                        const response = await fetch("/edit-profile/student", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                firstName,
+                                lastName,
+                                email,
+                                college
+                            })
+                        });
 
-                    alert('Profile updated successfully! (Changes are for demo only)');
+                        const result = await response.json();
+
+                        if (result.success) {
+                            currentUser.firstName = firstName;
+                            currentUser.lastName = lastName;
+                            currentUser.email = email;
+                            currentUser.college = college;
+
+                            initializeProfile(currentUser);
+                            closeEditModal();
+                            alert('Profile updated successfully!');
+                        } else {
+                            alert(result.message || 'Failed to update profile.');
+                        }
+                    } catch (error) {
+                        console.error("Save profile error:", error);
+                        alert("Something went wrong while saving profile.");
+                    }
                 }
 
                 function editProfile() {

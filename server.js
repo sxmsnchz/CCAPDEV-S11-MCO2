@@ -54,10 +54,6 @@ const commentSchema = new mongoose.Schema({
     type: String
   },
 
-  post: {
-    type:String
-  },
-
   createdAt: {
     type: Date,
     default: Date.now
@@ -337,7 +333,122 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// EDIT PROFILE
 
+app.post("/edit-profile/student", async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        success: false,
+        message: "You must be logged in."
+      });
+    }
+
+    if (req.session.user.userType !== "student") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied."
+      });
+    }
+
+    const { firstName, lastName, email, college } = req.body;
+
+    if (!firstName || !lastName || !email || !college) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required."
+      });
+    }
+
+    const updatedUser = await collection.findByIdAndUpdate(
+      req.session.user.id,
+      {
+        firstName,
+        lastName,
+        email,
+        college
+      },
+      { returnDocument: "after" } 
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found."
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully."
+    });
+
+  } catch (error) {
+    console.error("EDIT PROFILE STUDENT ERROR:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while updating profile."
+    });
+  }
+});
+
+app.post("/edit-profile/organization", async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        success: false,
+        message: "You must be logged in."
+      });
+    }
+
+    if (req.session.user.userType !== "organization") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied."
+      });
+    }
+
+    const { orgName, description, tagline, president, email, orgType } = req.body;
+
+    if (!orgName || !description || !president || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "All required fields are required."
+      });
+    }
+
+    const updatedUser = await collection.findByIdAndUpdate(
+      req.session.user.id,
+      {
+        orgName,
+        description,
+        tagline,
+        president,
+        email,
+        orgType
+      },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "Organization account not found."
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Organization profile updated successfully."
+    });
+  } catch (error) {
+    console.error("EDIT PROFILE ORGANIZATION ERROR:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while updating organization profile."
+    });
+  }
+});
 
 // ======================
 // ADD COMMENT
@@ -358,7 +469,7 @@ app.post("/add-comment", async (req, res) => {
 
     await newComment.save();
 
-    res.redirect(req.get("referer") || "/");
+    res.redirect("back");
 
   } catch (error) {
 
