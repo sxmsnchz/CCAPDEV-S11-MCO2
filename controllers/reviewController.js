@@ -3,7 +3,7 @@ const Review = require("../models/Review");
 // GET /reviews/:org — called by script.js to load reviews for a page
 async function getReviews(req, res) {
     try {
-        const reviews = await Review.find({ org: req.params.org }).populate("user");
+        const reviews = await Review.find({ org: req.params.org, archived: false }).populate("user");
         res.json(reviews);
     } catch (error) {
         console.error("GET REVIEWS ERROR:", error);
@@ -37,13 +37,9 @@ async function editReview(req, res) {
     try {
         const { rating, comment } = req.body;
 
-        const review = await Review.findByIdAndUpdate(
-            req.params.id,
-            { rating, comment },
-            { returnDocument: "after" }
-        );
+        const review = await Review.updateOne({ _id: req.params.id }, { rating, comment });
 
-        if (!review) {
+        if (review.matchedCount === 0) {
             return res.status(404).json({ success: false, message: "Review not found." });
         }
 
@@ -58,9 +54,10 @@ async function editReview(req, res) {
 // POST /reviews/delete/:id — admin only!!
 async function deleteReview(req, res) {
     try {
-        const review = await Review.findByIdAndDelete(req.params.id);
+        // flag it instead of deleting it
+        const review = await Review.updateOne({ _id: req.params.id }, { archived: true });
 
-        if (!review) {
+        if (review.matchedCount === 0) {
             return res.status(404).json({ success: false, message: "Review not found." });
         }
 

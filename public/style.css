@@ -1407,6 +1407,39 @@ body, html {
     border-color: #046307;
 }
 
+/* admin review action buttons */
+.review-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.edit-review-btn,
+.delete-review-btn {
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.edit-review-btn {
+    background: #e8f5e9;
+    color: #046307;
+    border: 1px solid #046307;
+}
+
+.edit-review-btn:hover { background: #046307; color: #fff; }
+
+.delete-review-btn {
+    background: #fdecea;
+    color: #c0392b;
+    border: 1px solid #c0392b;
+}
+
+.delete-review-btn:hover { background: #c0392b; color: #fff; }
+
 /* --- END OF REVIEWS PAGE CSS --- */
 /* ===== AUTHENTICATION STYLES ===== */
 

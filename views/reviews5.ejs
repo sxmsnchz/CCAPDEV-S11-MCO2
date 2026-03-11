@@ -101,6 +101,28 @@
             <p id="reviewsLoginWarning" class="hidden" style="text-align:center; margin-top:20px;">
                 Please log in to view and submit reviews.
             </p>
+            
+            <!-- ADMIN EDIT REVIEW MODAL -->
+            <div id="editReviewModal" class="modal hidden">
+                <div class="modal-content">
+                    <h3>Edit Review</h3>
+
+                    <div class="star-rating" id="editStarRating">
+                        <span data-value="1">★</span>
+                        <span data-value="2">★</span>
+                        <span data-value="3">★</span>
+                        <span data-value="4">★</span>
+                        <span data-value="5">★</span>
+                    </div>
+
+                    <textarea id="editReviewText" placeholder="Edit your review..."></textarea>
+
+                    <div class="modal-actions">
+                        <button id="cancelEditReview" class="submit-review" style="background:#aaa;">Cancel</button>
+                        <button id="saveEditReview" class="submit-review">Save</button>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <script src="/script.js"></script> 

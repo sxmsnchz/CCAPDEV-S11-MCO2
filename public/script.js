@@ -439,6 +439,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let selectedRating = 0;
     let reviews = [];
+    let rawReviews = []; // stores raw DB docs so we have access to _id for edit/delete
 
     // Map the current page url to its specific org
     const pageMap = {
@@ -454,6 +455,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function loadReviews() {
         const res = await fetch(`/reviews/${org}`);
         const data = await res.json();
+        rawReviews = data; // save raw docs for _id access
         reviews = data.map(r => new Review(
             r.user?.firstName ? `${r.user.firstName} ${r.user.lastName}`.trim() : r.user?.orgName || "User",
             r.rating,
@@ -514,6 +516,53 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // edit and save review
+    let editingId = null;
+    let editRating = 0;
+
+    const editModal      = document.getElementById("editReviewModal");
+    const editStars      = document.querySelectorAll("#editStarRating span");
+    const editText       = document.getElementById("editReviewText");
+    const saveEditBtn    = document.getElementById("saveEditReview");
+    const cancelEditBtn  = document.getElementById("cancelEditReview");
+
+    editStars.forEach(star => {
+        star.addEventListener("click", () => {
+            editRating = Number(star.dataset.value);
+            editStars.forEach(s => s.classList.toggle("active", Number(s.dataset.value) <= editRating));
+        });
+    });
+
+    function openEditModal(id, rating, comment) {
+        editingId = id;
+        editRating = rating;
+        editText.value = comment;
+        editStars.forEach(s => s.classList.toggle("active", Number(s.dataset.value) <= rating));
+        editModal?.classList.remove("hidden");
+    }
+
+    cancelEditBtn?.addEventListener("click", () => editModal?.classList.add("hidden"));
+
+    editModal?.addEventListener("click", (e) => {
+        if (e.target === editModal) editModal.classList.add("hidden");
+    });
+
+    saveEditBtn?.addEventListener("click", async () => {
+        if (!editingId || !editRating || !editText?.value.trim()) return;
+
+        const res = await fetch(`/reviews/edit/${editingId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rating: editRating, comment: editText.value.trim() })
+        });
+        const data = await res.json();
+        if (data.success) {
+            editModal.classList.add("hidden");
+            editingId = null;
+            await loadReviews();
+        }
+    });
+
     function renderReviews() {
         if (!reviewsList) return;
 
@@ -523,7 +572,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             ? reviews
             : reviews.filter(review => review.rating === Number(currentFilter));
 
-        filteredReviews.forEach(review => {
+        filteredReviews.forEach((review, i) => {
+            const raw = rawReviews[i]; // match review object to its raw DB doc for _id
+
             const div = document.createElement("div");
             div.className = "review-item";
 
@@ -531,7 +582,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <strong>${review.user}</strong> • <span>${review.date}</span>
                 <div class="review-stars">${"★".repeat(review.rating)}</div>
                 <p>${review.comment}</p>
+                ${session.userType === "admin" && raw ? `
+                    <div class="review-actions">
+                        <button class="edit-review-btn">Edit</button>
+                        <button class="delete-review-btn">Delete</button>
+                    </div>
+                ` : ""}
             `;
+
+            // admin edit and delete buttons
+            div.querySelector(".edit-review-btn")?.addEventListener("click", () => {
+                openEditModal(raw._id, review.rating, review.comment);
+            });
+
+            div.querySelector(".delete-review-btn")?.addEventListener("click", async () => {
+                if (!confirm("Delete this review?")) return;
+                const res = await fetch(`/reviews/delete/${raw._id}`, { method: "POST" });
+                const data = await res.json();
+                if (data.success) await loadReviews();
+            });
 
             reviewsList.appendChild(div);
         });

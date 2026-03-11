@@ -60,7 +60,9 @@ async function seedData() {
             {
                 email: "admin@orgspace.dlsu.edu.ph",
                 password: admin123,
-                userType: "admin"
+                userType: "admin", 
+                firstName: "Admin",
+                lastName: "User" 
             }
         ];
 
@@ -92,39 +94,39 @@ async function seedData() {
         await Review.insertMany([
 
             // AU
-            { user: john._id,  org: "org1", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
-            { user: maria._id, org: "org1", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
-            { user: juan._id,  org: "org1", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
-            { user: juan._id,  org: "org1", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
-            { user: maria._id, org: "org1", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") },
+            { user: john._id,  org: "org1", rating: 5, comment: "Most fulfilling org I've joined in DLSU!",  archived: false, createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org1", rating: 4, comment: "Super fun org!",                            archived: false, createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org1", rating: 3, comment: "Actually, good experience overall.",        archived: false, createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org1", rating: 2, comment: "Hmm it's okay!",                            archived: false, createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org1", rating: 1, comment: "Nevermind, they could use some improvement.", archived: false, createdAt: new Date("2026-02-15") },
 
             // CSO
-            { user: john._id,  org: "org2", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
-            { user: maria._id, org: "org2", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
-            { user: juan._id,  org: "org2", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
-            { user: juan._id,  org: "org2", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
-            { user: maria._id, org: "org2", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") },
+            { user: john._id,  org: "org2", rating: 5, comment: "Most fulfilling org I've joined in DLSU!",  archived: false, createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org2", rating: 4, comment: "Super fun org!",                            archived: false, createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org2", rating: 3, comment: "Actually, good experience overall.",        archived: false, createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org2", rating: 2, comment: "Hmm it's okay!",                            archived: false, createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org2", rating: 1, comment: "Nevermind, they could use some improvement.", archived: false, createdAt: new Date("2026-02-15") },
 
             // ISO
-            { user: john._id,  org: "org3", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
-            { user: maria._id, org: "org3", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
-            { user: juan._id,  org: "org3", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
-            { user: juan._id,  org: "org3", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
-            { user: maria._id, org: "org3", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") },
+            { user: john._id,  org: "org3", rating: 5, comment: "Most fulfilling org I've joined in DLSU!",  archived: false, createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org3", rating: 4, comment: "Super fun org!",                            archived: false, createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org3", rating: 3, comment: "Actually, good experience overall.",        archived: false, createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org3", rating: 2, comment: "Hmm it's okay!",                            archived: false, createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org3", rating: 1, comment: "Nevermind, they could use some improvement.", archived: false, createdAt: new Date("2026-02-15") },
 
             // LSCS
-            { user: john._id,  org: "org4", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
-            { user: maria._id, org: "org4", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
-            { user: juan._id,  org: "org4", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
-            { user: juan._id,  org: "org4", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
-            { user: maria._id, org: "org4", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") },
+            { user: john._id,  org: "org4", rating: 5, comment: "Most fulfilling org I've joined in DLSU!",  archived: false, createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org4", rating: 4, comment: "Super fun org!",                            archived: false, createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org4", rating: 3, comment: "Actually, good experience overall.",        archived: false, createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org4", rating: 2, comment: "Hmm it's okay!",                            archived: false, createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org4", rating: 1, comment: "Nevermind, they could use some improvement.", archived: false, createdAt: new Date("2026-02-15") },
 
             // MAFIA
-            { user: john._id,  org: "org5", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
-            { user: maria._id, org: "org5", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
-            { user: juan._id,  org: "org5", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
-            { user: juan._id,  org: "org5", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
-            { user: maria._id, org: "org5", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") }
+            { user: john._id,  org: "org5", rating: 5, comment: "Most fulfilling org I've joined in DLSU!",  archived: false, createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org5", rating: 4, comment: "Super fun org!",                            archived: false, createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org5", rating: 3, comment: "Actually, good experience overall.",        archived: false, createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org5", rating: 2, comment: "Hmm it's okay!",                            archived: false, createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org5", rating: 1, comment: "Nevermind, they could use some improvement.", archived: false, createdAt: new Date("2026-02-15") },
 
         ]);
 
