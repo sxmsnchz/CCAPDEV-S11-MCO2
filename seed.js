@@ -2,13 +2,15 @@ const bcrypt = require("bcrypt");
 require("./config/db"); // connect to MongoDB
 const User = require("./models/User");
 const Comment = require("./models/Comment");
+const Review = require("./models/Review");
 
-async function seedUsers() {
+async function seedData() {
     try {
-        console.log("Seeding users...");
+        console.log("Seeding users, comments and reviews...");
 
         await User.deleteMany({});
         await Comment.deleteMany({});
+        await Review.deleteMany({});
 
         const password123 = await bcrypt.hash("password123", 10);
         const admin123 = await bcrypt.hash("admin123", 10);
@@ -86,7 +88,47 @@ async function seedUsers() {
             { text: "This org has such a great community.", user: juan._id, page: "org1", post: "post3" }
         ]);
 
-        console.log("Users and comments seeded successfully.");
+        // insert the following review data
+        await Review.insertMany([
+
+            // AU
+            { user: john._id,  org: "org1", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org1", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org1", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org1", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org1", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") },
+
+            // CSO
+            { user: john._id,  org: "org2", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org2", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org2", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org2", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org2", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") },
+
+            // ISO
+            { user: john._id,  org: "org3", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org3", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org3", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org3", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org3", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") },
+
+            // LSCS
+            { user: john._id,  org: "org4", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org4", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org4", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org4", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org4", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") },
+
+            // MAFIA
+            { user: john._id,  org: "org5", rating: 5, comment: "Most fulfilling org I've joined in DLSU!", createdAt: new Date("2026-02-01") },
+            { user: maria._id, org: "org5", rating: 4, comment: "Super fun org!",                           createdAt: new Date("2026-02-04") },
+            { user: juan._id,  org: "org5", rating: 3, comment: "Actually, good experience overall.",        createdAt: new Date("2026-02-10") },
+            { user: juan._id,  org: "org5", rating: 2, comment: "Hmm it's okay!",                           createdAt: new Date("2026-02-05") },
+            { user: maria._id, org: "org5", rating: 1, comment: "Nevermind, they could use some improvement.", createdAt: new Date("2026-02-15") }
+
+        ]);
+
+        console.log("Users, comments and reviews seeded successfully.");
         process.exit();
 
     } catch (error) {
@@ -95,4 +137,4 @@ async function seedUsers() {
     }
 }
 
-seedUsers();
+seedData();

@@ -438,13 +438,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     let selectedRating = 0;
-    let reviews = [
-        new Review("Lara Turk", 5, "Most fulfilling org experiences I’ve had in DLSU 💚", "02/01/2026"),
-        new Review("Sam Sanchez", 4, "Super fun org!", "02/04/2026"),
-        new Review("Ethan Guo", 3, "Good community and members :D", "02/10/2026"),
-        new Review("Aya Pangan", 2, "It’s okay overall!", "02/15/2026"),
-        new Review("Jane Doe", 1, "Could improve internal communication.", "02/16/2026")
-    ];
+    let reviews = [];
+
+    // Map the current page url to its specific org
+    const pageMap = {
+        "/reviews1": "org1",
+        "/reviews2": "org2",
+        "/reviews3": "org3",
+        "/reviews4": "org4",
+        "/reviews5": "org5"
+    };
+    const org = pageMap[window.location.pathname];
+
+    // Gets from databse and converts to objects
+    async function loadReviews() {
+        const res = await fetch(`/reviews/${org}`);
+        const data = await res.json();
+        reviews = data.map(r => new Review(
+            r.user?.firstName ? `${r.user.firstName} ${r.user.lastName}`.trim() : r.user?.orgName || "User",
+            r.rating,
+            r.comment,
+            new Date(r.createdAt).toLocaleDateString()
+        ));
+        renderReviews();
+    }
 
     let currentFilter = "all";
 
@@ -470,7 +487,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    document.getElementById("submitReview")?.addEventListener("click", () => {
+    document.getElementById("submitReview")?.addEventListener("click", async () => {
         if (!isLoggedIn) {
             alert("You must be logged in to leave a review.");
             return;
@@ -481,18 +498,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        const review = new Review(
-            reviewUserName,
-            Number(selectedRating),
-            reviewText.value
-        );
+        // Can now save to database then reload
+        const res = await fetch("/reviews", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ org, rating: Number(selectedRating), comment: reviewText.value.trim() })
+        });
 
-        reviews.push(review);
-        renderReviews();
-
-        selectedRating = 0;
-        updateStars(0);
-        reviewText.value = "";
+        const data = await res.json();
+        if (data.success) {
+            selectedRating = 0;
+            updateStars(0);
+            reviewText.value = "";
+            await loadReviews();
+        }
     });
 
     function renderReviews() {
@@ -556,5 +575,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    renderReviews();
+    // loads from database
+    await loadReviews();
 });

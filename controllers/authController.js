@@ -31,7 +31,10 @@ async function postLogin(req, res) {
 
         req.session.user = {
             id: user._id,
-            userType: user.userType
+            userType: user.userType,
+            firstName: user.firstName || "",
+            lastName: user.lastName || "",
+            orgName: user.orgName || ""
         };
 
         req.session.save(() => {
