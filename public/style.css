@@ -1109,23 +1109,30 @@ body, html {
     background: #f5f7f5;
 }
 
+/* Post header improvements */
 .post-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .post-header h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #046307;
     margin: 0;
-    font-size: 1.1rem;
-    font-weight: 800;
+    flex: 1; /* Allow title to take available space */
 }
 
+/* Post actions container */
 .post-actions {
-    display: flex;
-    gap: 10px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .post-actions button {
@@ -1142,11 +1149,25 @@ body, html {
     text-decoration: underline;
 }
 
+/* Comment in edit mode */
 .comment-text.editing {
-    outline: 1.5px dashed #046307;
-    padding: 4px;
-    border-radius: 4px;
-    background: #f5f7f5;
+    display: none;
+}
+
+/* Better comment header */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.comment-header strong {
+    color: #046307;
+    font-size: 0.95rem;
+    font-weight: 700;
 }
 
 .comment-actions {
@@ -2215,4 +2236,514 @@ main .btn-secondary {
     main .admin-table td {
         padding: 8px 10px;
     }
+}
+
+/* Better like button alignment */
+.like-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 5px 12px !important;
+    font-size: 0.9rem !important;
+    line-height: 1 !important;
+    height: 32px !important; /* Fixed height */
+    border-radius: 16px !important;
+    white-space: nowrap !important;
+}
+
+.like-btn .heart-icon {
+    font-size: 1rem;
+    display: inline-block;
+    line-height: 1;
+}
+
+.like-count {
+    font-weight: 600;
+    margin-left: 2px;
+}
+
+/* Triple dot menu for posts */
+.post-menu-container {
+    display: flex;
+    align-items: center;
+    height: 32px; /* Match like button height */
+}
+
+/* Remove any hidden class that might be applied */
+.post-actions.hidden,
+.like-btn.hidden {
+    display: flex !important;  /* Override hidden class */
+}
+
+/* Image Selector Styles */
+.image-option:hover {
+    border-color: #046307 !important;
+    transform: scale(1.02);
+}
+
+.image-option.selected {
+    border-color: #046307 !important;
+    background: rgba(4, 99, 7, 0.1);
+}
+
+#select-image-btn {
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+#select-image-btn:hover {
+    background: #e0e0e0;
+}
+
+#remove-image-btn {
+    padding: 4px 12px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#remove-image-btn:hover {
+    background: #cc0000;
+}
+
+.image-selection-area {
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Dropdown Menu Styles */
+.post-menu-trigger:hover,
+.comment-menu-trigger:hover {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.post-dropdown-menu button:hover,
+.comment-dropdown-menu button:hover {
+    background: #f5f5f5;
+}
+
+.post-dropdown-menu form button:hover,
+.comment-dropdown-menu form button:hover {
+    background: #fdecea;
+}
+
+/* Ensure dropdown appears above other content */
+.post-dropdown-menu,
+.comment-dropdown-menu {
+    min-width: 100px;
+}
+
+/* Enhanced Edit Post Modal */
+#edit-post-modal .modal-content {
+    max-width: 600px;
+    padding: 30px;
+}
+
+#edit-post-modal h3 {
+    color: #046307;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #046307;
+}
+
+#edit-post-modal .form-group {
+    margin-bottom: 20px;
+}
+
+#edit-post-modal label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+#edit-post-modal input,
+#edit-post-modal textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#edit-post-modal input:focus,
+#edit-post-modal textarea:focus {
+    border-color: #046307;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(4, 99, 7, 0.1);
+}
+
+#edit-post-modal textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+#edit-post-modal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+#edit-post-modal .btn-primary {
+    background: #046307;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#edit-post-modal .btn-primary:hover {
+    background: #0B3D0B;
+}
+
+#edit-post-modal .btn-secondary {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#edit-post-modal .btn-secondary:hover {
+    background: #e8e8e8;
+}
+
+/* Image selection in edit modal */
+#edit-image {
+    margin-top: 10px;
+}
+
+#edit-select-image-btn {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+#edit-select-image-btn:hover {
+    background: #e0e0e0;
+}
+
+/* Comment Edit UI */
+.edit-comment-form {
+    margin-top: 12px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.edit-comment-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+}
+
+.edit-comment-form input:focus {
+    border-color: #046307;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(4, 99, 7, 0.1);
+}
+
+.edit-comment-form button[type="submit"] {
+    background: #046307;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.edit-comment-form button[type="submit"]:hover {
+    background: #0B3D0B;
+}
+
+/* Triple dot menu for comments */
+.comment-menu-trigger {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.comment-menu-trigger:hover {
+    background: #f0f0f0;
+}
+
+.comment-dropdown-menu {
+    min-width: 100px;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.comment-dropdown-menu button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.comment-dropdown-menu button:hover {
+    background: #f5f5f5;
+}
+
+.comment-dropdown-menu .delete-comment-btn {
+    color: #c0392b;
+}
+
+.comment-dropdown-menu .delete-comment-btn:hover {
+    background: #fdecea;
+}
+
+.post-menu-trigger {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: background 0.2s;
+}
+
+.post-menu-trigger:hover {
+    background: #f0f0f0;
+}
+
+.post-dropdown-menu {
+    min-width: 100px;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    border-radius: 6px;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.post-dropdown-menu button,
+.post-dropdown-menu .delete-post-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.post-dropdown-menu button:hover {
+    background: #f5f5f5;
+}
+
+.post-dropdown-menu .delete-post-btn {
+    color: #c0392b;
+}
+
+.post-dropdown-menu .delete-post-btn:hover {
+    background: #fdecea;
+}
+
+/* Comment edit buttons */
+.save-comment-btn,
+.cancel-comment-edit-btn {
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.save-comment-btn:hover {
+    background: #0B3D0B !important;
+}
+
+.cancel-comment-edit-btn:hover {
+    background: #e0e0e0 !important;
+}
+
+/* Ensure edit button in dropdown is visible */
+.comment-dropdown-menu .edit-comment-btn {
+    display: block !important;
+}
+
+/* Comment creation styles */
+.comment-edit-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.save-comment-btn {
+    background: #046307;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.save-comment-btn:hover {
+    background: #0B3D0B;
+}
+
+.cancel-comment-edit-btn {
+    background: #f0f0f0;
+    color: #666;
+    border: 1px solid #ddd;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.cancel-comment-edit-btn:hover {
+    background: #e0e0e0;
+}
+
+/* Ensure new comments have the same styles */
+.comment .comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.comment .comment-header strong {
+    color: #046307;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.comment-menu-container {
+    position: relative;
+}
+
+.comment-menu-trigger {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 5px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.comment-menu-trigger:hover {
+    background: #f0f0f0;
+}
+
+.comment-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 100;
+    min-width: 100px;
+}
+
+.comment-dropdown-menu button,
+.comment-dropdown-menu .delete-comment-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.comment-dropdown-menu button:hover {
+    background: #f5f5f5;
+}
+
+.comment-dropdown-menu .delete-comment-btn {
+    color: #c0392b;
+}
+
+.comment-dropdown-menu .delete-comment-btn:hover {
+    background: #fdecea;
+}
+
+.edit-comment-form.hidden {
+    display: none;
+}
+
+.edit-comment-form {
+    margin-top: 12px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.edit-comment-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+}
+
+.edit-comment-form input:focus {
+    border-color: #046307;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(4, 99, 7, 0.1);
 }
