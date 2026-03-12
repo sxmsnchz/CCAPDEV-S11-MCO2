@@ -25,6 +25,18 @@ app.use((req, res, next) => {
     next();
 });
 
+// Fix CSP headers - add this after session configuration
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", 
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "connect-src 'self' http://localhost:3000 ws://localhost:3000;"
+    );
+    next();
+});
+
 // Session debug route
 app.get("/session", (req, res) => {
     res.json({
@@ -33,6 +45,7 @@ app.get("/session", (req, res) => {
         user: req.session.user || null
     });
 });
+
 
 // ======================
 // ROUTES
@@ -44,6 +57,7 @@ app.use("/", require("./routes/orgRoutes"));
 app.use("/", require("./routes/commentRoutes"));
 app.use("/", require("./routes/adminRoutes"));
 app.use("/", require("./routes/reviewRoutes"));
+app.use("/", require("./routes/postRoutes"));
 
 // Static pages
 app.get("/contact",  (req, res) => res.render("contact"));

@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const isOrgOwner =
         userRole === "organization" &&
-        currentUser === pageOrg;
+        session.user.email === pageOrg;
 
     const canManagePosts =
         userRole === "admin" || isOrgOwner;
@@ -56,23 +56,323 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // ===== EDIT COMMENT FUNCTIONALITY =====
     document.querySelectorAll(".edit-comment-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const comment = btn.closest(".comment");
+            const text = comment.querySelector(".comment-text");
+            const form = comment.querySelector(".edit-comment-form");
+            const editBtn = btn;
 
-  btn.addEventListener("click", () => {
+            // Hide the edit button in the dropdown temporarily
+            if (editBtn) {
+                editBtn.style.display = 'none';
+            }
 
-    const comment = btn.closest(".comment");
+            text.classList.add("hidden");
+            form.classList.remove("hidden");
+        });
+    });
 
-    const text = comment.querySelector(".comment-text");
-    const form = comment.querySelector(".edit-comment-form");
+    // ===== ADD COMMENT WITHOUT RELOAD =====  👈 ADD THIS HERE
+    document.querySelectorAll('.submit-comment').forEach(btn => {
+        // Remove existing listeners to avoid duplicates
+        btn.replaceWith(btn.cloneNode(true));
+    });
 
-    text.classList.toggle("hidden");
-    form.classList.toggle("hidden");
+    document.querySelectorAll('.submit-comment').forEach(btn => {
+        btn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const form = this.closest('form');
+            const textarea = form.querySelector('.comment-input');
+            const text = textarea.value.trim();
+            const postId = form.querySelector('input[name="postId"]').value;
+            const page = form.querySelector('input[name="page"]').value;
+            
+            if (!text) {
+                alert('Please write a comment');
+                return;
+            }
+            
+            // Disable button to prevent double submission
+            this.disabled = true;
+            this.textContent = 'Posting...';
+            
+            try {
+                const response = await fetch('/add-comment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        page: page,
+                        postId: postId
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Clear the textarea
+                    textarea.value = '';
+                    
+                    // Create new comment element and add to DOM
+                    const commentsDiv = form.closest('.comments');
+                    const newComment = createCommentElement(data.comment, data.user);
+                    commentsDiv.insertBefore(newComment, form);
+                    
+                    // Update comment count
+                    const commentToggle = commentsDiv.closest('.org-post').querySelector('.comment-toggle');
+                    const currentText = commentToggle.textContent;
+                    const match = currentText.match(/\d+/);
+                    const currentCount = match ? parseInt(match[0]) : 0;
+                    commentToggle.textContent = `View comments (${currentCount + 1})`;
+                    
+                    console.log('Comment added successfully');
+                } else {
+                    const error = await response.json();
+                    alert('Failed to add comment: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding comment');
+            } finally {
+                // Re-enable button
+                this.disabled = false;
+                this.textContent = 'Post';
+            }
+        });
+    });
 
-  });
+    // Helper functions for comments  👈 ADD THESE RIGHT AFTER
+    function createCommentElement(commentData, userData) {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'comment';
+        commentDiv.dataset.owner = userData.id;
+        
+        const displayName = userData.name || 'User';
+        
+        commentDiv.innerHTML = `
+            <div class="comment-header">
+                <strong>${displayName}</strong>
+                <div class="comment-menu-container">
+                    <button class="comment-menu-trigger">⋮</button>
+                    <div class="comment-dropdown-menu">
+                        <button class="edit-comment-btn">Edit</button>
+                        <form action="/delete-comment/${commentData._id}" method="POST">
+                            <button type="submit" class="delete-comment-btn">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <p class="comment-text">${commentData.text}</p>
+            <form action="/edit-comment/${commentData._id}" method="POST" class="edit-comment-form hidden">
+                <input type="text" name="text" value="${commentData.text}" required>
+                <div class="comment-edit-actions">
+                    <button type="submit" class="save-comment-btn">Save</button>
+                    <button type="button" class="cancel-comment-edit-btn">Cancel</button>
+                </div>
+            </form>
+        `;
+        
+        // Attach event listeners to new comment
+        attachCommentListeners(commentDiv);
+        
+        return commentDiv;
+    }
 
-});
+    function attachCommentListeners(commentDiv) {
+        // Edit button in dropdown
+        const editBtn = commentDiv.querySelector('.edit-comment-btn');
+        if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const textP = commentDiv.querySelector('.comment-text');
+                const form = commentDiv.querySelector('.edit-comment-form');
+                textP.classList.add('hidden');
+                form.classList.remove('hidden');
+            });
+        }
+        
+        // Cancel button
+        const cancelBtn = commentDiv.querySelector('.cancel-comment-edit-btn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const textP = commentDiv.querySelector('.comment-text');
+                const form = commentDiv.querySelector('.edit-comment-form');
+                textP.classList.remove('hidden');
+                form.classList.add('hidden');
+            });
+        }
+        
+        // Edit form submission
+        const editForm = commentDiv.querySelector('.edit-comment-form');
+        if (editForm) {
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const textP = commentDiv.querySelector('.comment-text');
+                const input = editForm.querySelector('input');
+                const newText = input.value.trim();
+                
+                if (!newText) {
+                    alert("Comment cannot be empty");
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(editForm.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ text: newText })
+                    });
+                    
+                    if (response.ok) {
+                        textP.textContent = newText;
+                        textP.classList.remove('hidden');
+                        editForm.classList.add('hidden');
+                    } else {
+                        alert('Failed to update comment');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error updating comment');
+                }
+            });
+        }
+        
+        // Menu toggle
+        const menuTrigger = commentDiv.querySelector('.comment-menu-trigger');
+        if (menuTrigger) {
+            menuTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const menu = menuTrigger.nextElementSibling;
+                document.querySelectorAll('.comment-dropdown-menu').forEach(m => {
+                    if (m !== menu) m.style.display = 'none';
+                });
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            });
+        }
+    }
 
+    // Cancel comment edit
+    document.querySelectorAll(".cancel-comment-edit-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const comment = btn.closest(".comment");
+            const text = comment.querySelector(".comment-text");
+            const form = comment.querySelector(".edit-comment-form");
+            const editBtn = comment.querySelector(".edit-comment-btn");
 
+            // Show the edit button again
+            if (editBtn) {
+                editBtn.style.display = 'block';
+            }
+
+            text.classList.remove("hidden");
+            form.classList.add("hidden");
+        });
+    });
+
+    // Handle comment edit form submission without page reload
+    document.querySelectorAll(".edit-comment-form").forEach(form => {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const comment = form.closest(".comment");
+            const textP = comment.querySelector(".comment-text");
+            const editBtn = comment.querySelector(".edit-comment-btn");
+            const input = form.querySelector('input[name="text"]');
+            const newText = input.value.trim();
+            
+            if (!newText) {
+                alert("Comment cannot be empty");
+                return;
+            }
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: newText })
+                });
+
+                if (response.ok) {
+                    // Update the comment text in the DOM
+                    textP.textContent = newText;
+                    
+                    // Show the edit button again
+                    if (editBtn) {
+                        editBtn.style.display = 'block';
+                    }
+                    
+                    // Hide form, show text
+                    textP.classList.remove("hidden");
+                    form.classList.add("hidden");
+                    
+                    console.log('Comment updated successfully');
+                } else {
+                    alert('Failed to update comment');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating comment');
+            }
+        });
+    });
+
+    // ===== LIKE BUTTON FUNCTIONALITY =====
+    document.querySelectorAll('.like-btn').forEach(function(button) {
+        // Set initial liked state
+        const likedByUser = button.dataset.likedByUser === 'true';
+        if (likedByUser) {
+            button.style.background = 'rgba(4, 99, 7, 0.1)';
+        }
+        
+        button.addEventListener('click', async function(e) {
+            e.preventDefault();
+            const postId = this.dataset.postId;
+            const likeCountSpan = this.querySelector('.like-count');
+            
+            try {
+                const response = await fetch('/posts/like/' + postId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Server error');
+                }
+                
+                const data = await response.json();
+                likeCountSpan.textContent = data.likes;
+                
+                // Toggle liked state visually
+                if (data.liked) {
+                    this.style.background = 'rgba(4, 99, 7, 0.1)';
+                } else {
+                    this.style.background = 'none';
+                }
+                
+            } catch (error) {
+                console.error('Error liking post:', error);
+            }
+        });
+    });
+
+    
     // Lightbox
     const lightbox = document.getElementById("js-lightbox");
     const lightboxImg = lightbox?.querySelector("img");
@@ -100,6 +400,412 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // ===== CREATE POST FUNCTIONALITY - MUST COME FIRST =====
+    const createBtn = document.getElementById("create-post-btn");
+    const modal = document.getElementById("create-post-modal");
+    const submitPost = document.getElementById("submit-post");
+    const cancelPost = document.getElementById("cancel-post");
+
+    const titleInput = document.getElementById("new-post-title");
+    const contentInput = document.getElementById("new-post-content");
+    const imageInput = document.getElementById("new-post-image");
+
+    const postsContainer = document.querySelector(".org-posts");
+
+    console.log('Create button found:', createBtn); // Debug
+
+    // ===== IMAGE SELECTOR FUNCTIONALITY =====
+    const imageSelectorModal = document.getElementById("image-selector-modal");
+    const selectImageBtn = document.getElementById("select-image-btn");
+    const closeImageSelector = document.getElementById("close-image-selector");
+    const imageGrid = document.querySelector(".image-grid");
+    const selectedImageName = document.getElementById("selected-image-name");
+    const newPostImage = document.getElementById("new-post-image");
+    const imagePreview = document.getElementById("image-preview");
+    const previewImg = imagePreview?.querySelector("img");
+    const removeImageBtn = document.getElementById("remove-image-btn");
+
+    // ===== DROPDOWN MENU FUNCTIONALITY =====
+    // Close all dropdowns when clicking elsewhere
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('post-menu-trigger') && !e.target.classList.contains('comment-menu-trigger')) {
+            document.querySelectorAll('.post-dropdown-menu, .comment-dropdown-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        }
+    });
+
+    // Post menu toggle
+    document.querySelectorAll('.post-menu-trigger').forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = this.nextElementSibling;
+            // Close other menus
+            document.querySelectorAll('.post-dropdown-menu, .comment-dropdown-menu').forEach(m => {
+                if (m !== menu) m.style.display = 'none';
+            });
+            // Toggle this menu
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+
+    // Comment menu toggle
+    document.querySelectorAll('.comment-menu-trigger').forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = this.nextElementSibling;
+            // Close other menus
+            document.querySelectorAll('.post-dropdown-menu, .comment-dropdown-menu').forEach(m => {
+                if (m !== menu) m.style.display = 'none';
+            });
+            // Toggle this menu
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+
+    // List of images in your assets folder
+    const availableImages = [
+        { name: "AU Logo", path: "/assets/au_logo1.png" },
+        { name: "AU 2nd GA", path: "/assets/AU_2ndGA.jpg" },
+        { name: "AU WCD", path: "/assets/AU_WCD.jpg" },
+        { name: "AU MAUgic", path: "/assets/AU_MAUgic.jpg" },
+        { name: "AU Highlight 1", path: "/assets/AU1.jpg" },
+        { name: "AU Highlight 2", path: "/assets/AU2.jpg" },
+        { name: "AU Highlight 3", path: "/assets/AU3.jpg" }
+    ];
+
+    // Open image selector
+    selectImageBtn?.addEventListener("click", () => {
+        // Populate image grid
+        imageGrid.innerHTML = "";
+        availableImages.forEach(img => {
+            const imgDiv = document.createElement("div");
+            imgDiv.className = "image-option";
+            imgDiv.style.cssText = "cursor: pointer; border: 2px solid transparent; border-radius: 8px; overflow: hidden; transition: all 0.2s;";
+            imgDiv.innerHTML = `
+                <img src="${img.path}" alt="${img.name}" style="width: 100%; height: 120px; object-fit: cover;">
+                <p style="text-align: center; margin: 5px 0; font-size: 0.9rem;">${img.name}</p>
+            `;
+            
+            imgDiv.addEventListener("click", () => {
+                // Select this image
+                newPostImage.value = img.path;
+                selectedImageName.textContent = img.name;
+                
+                // Show preview
+                previewImg.src = img.path;
+                imagePreview.style.display = "block";
+                
+                // Close selector
+                imageSelectorModal.classList.add("hidden");
+            });
+            
+            imageGrid.appendChild(imgDiv);
+        });
+        
+        imageSelectorModal.classList.remove("hidden");
+    });
+
+    // Close image selector
+    closeImageSelector?.addEventListener("click", () => {
+        imageSelectorModal.classList.add("hidden");
+    });
+
+    // Remove selected image
+    removeImageBtn?.addEventListener("click", () => {
+        newPostImage.value = "";
+        selectedImageName.textContent = "No image selected";
+        imagePreview.style.display = "none";
+        previewImg.src = "";
+    });
+
+    // Click outside to close
+    imageSelectorModal?.addEventListener("click", (e) => {
+        if (e.target === imageSelectorModal) {
+            imageSelectorModal.classList.add("hidden");
+        }
+    });
+
+    // ===== EDIT IMAGE SELECTOR FUNCTIONALITY =====
+    const editImageInput = document.getElementById("edit-image");
+    const editImageSelectorBtn = document.createElement("button");
+    editImageSelectorBtn.type = "button";
+    editImageSelectorBtn.id = "edit-select-image-btn";
+    editImageSelectorBtn.className = "btn-secondary";
+    editImageSelectorBtn.textContent = "Choose Image";
+    editImageSelectorBtn.style.marginBottom = "10px";
+
+    // Insert the button before the edit image input
+    if (editImageInput && editImageInput.parentNode) {
+        editImageInput.parentNode.insertBefore(editImageSelectorBtn, editImageInput);
+    }
+
+    // Create a hidden input to store selected image path
+    const editSelectedImagePath = document.createElement("input");
+    editSelectedImagePath.type = "hidden";
+    editSelectedImagePath.id = "edit-selected-image";
+    if (editImageInput && editImageInput.parentNode) {
+        editImageInput.parentNode.insertBefore(editSelectedImagePath, editImageInput.nextSibling);
+    }
+
+    // Preview for edit modal
+    const editPreviewDiv = document.createElement("div");
+    editPreviewDiv.id = "edit-image-preview";
+    editPreviewDiv.style.display = "none";
+    editPreviewDiv.style.marginTop = "10px";
+    editPreviewDiv.innerHTML = `
+        <img src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+        <button type="button" id="edit-remove-image-btn" class="btn-small" style="margin-top: 5px; background: #ff4444; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer;">Remove</button>
+    `;
+
+    if (editImageInput && editImageInput.parentNode) {
+        editImageInput.parentNode.insertBefore(editPreviewDiv, editImageInput.nextSibling);
+    }
+
+    // Edit image selector click
+    document.getElementById("edit-select-image-btn")?.addEventListener("click", () => {
+        // Populate image grid
+        const editImageGrid = document.querySelector(".image-grid");
+        if (!editImageGrid) return;
+        
+        editImageGrid.innerHTML = "";
+        availableImages.forEach(img => {
+            const imgDiv = document.createElement("div");
+            imgDiv.className = "image-option";
+            imgDiv.style.cssText = "cursor: pointer; border: 2px solid transparent; border-radius: 8px; overflow: hidden; transition: all 0.2s;";
+            imgDiv.innerHTML = `
+                <img src="${img.path}" alt="${img.name}" style="width: 100%; height: 120px; object-fit: cover;">
+                <p style="text-align: center; margin: 5px 0; font-size: 0.9rem;">${img.name}</p>
+            `;
+            
+            imgDiv.addEventListener("click", () => {
+                // Select this image
+                editImageInput.value = img.path;
+                editSelectedImagePath.value = img.path;
+                
+                // Show preview
+                const previewImg = editPreviewDiv.querySelector("img");
+                previewImg.src = img.path;
+                editPreviewDiv.style.display = "block";
+                
+                // Close selector
+                imageSelectorModal.classList.add("hidden");
+            });
+            
+            editImageGrid.appendChild(imgDiv);
+        });
+        
+        imageSelectorModal.classList.remove("hidden");
+    });
+
+    // Edit remove image button
+    document.getElementById("edit-remove-image-btn")?.addEventListener("click", () => {
+        editImageInput.value = "";
+        editSelectedImagePath.value = "";
+        editPreviewDiv.style.display = "none";
+    });
+
+    // When opening edit modal, sync the image input
+    const originalShowEditPostModal = window.showEditPostModal;
+    window.showEditPostModal = function(postId) {
+        // Call original function first
+        originalShowEditPostModal(postId);
+        
+        // Then set up the image preview
+        setTimeout(() => {
+            const imageUrl = editImageInput.value;
+            if (imageUrl) {
+                const previewImg = editPreviewDiv.querySelector("img");
+                previewImg.src = imageUrl;
+                editPreviewDiv.style.display = "block";
+            }
+        }, 100);
+    };
+
+    // ===== EDIT POST MODAL FUNCTION =====
+    window.showEditPostModal = function(postId) {
+        console.log('Opening edit modal for post:', postId);
+        
+        const modal = document.getElementById('edit-post-modal');
+        const postCard = document.getElementById('post-' + postId);
+        
+        if (!postCard) {
+            console.error('Post card not found:', postId);
+            return;
+        }
+        
+        // Get post data from the DOM
+        const titleEl = postCard.querySelector('h3');
+        const contentEl = postCard.querySelector('.post-content');
+        const imageEl = postCard.querySelector('.post-image');
+        
+        const title = titleEl ? titleEl.textContent : '';
+        let content = '';
+        if (contentEl) {
+            content = contentEl.textContent || contentEl.innerText || '';
+            content = content.trim();
+        }       
+        const image = imageEl ? imageEl.src : '';
+        
+        // Set the post ID in hidden field
+        document.getElementById('edit-post-id').value = postId;
+        
+        // Fill in the form
+        document.getElementById('edit-title').value = title;
+        document.getElementById('edit-content').value = content;
+        document.getElementById('edit-image').value = image || '';
+        
+        // Show modal
+        modal.classList.remove('hidden');
+    };
+
+    // ===== HANDLE EDIT FORM SUBMISSION =====
+    const editForm = document.getElementById('edit-post-form');
+    if (editForm) {
+        // Remove any existing listeners
+        const newForm = editForm.cloneNode(true);
+        editForm.parentNode.replaceChild(newForm, editForm);
+        
+        newForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const postId = document.getElementById('edit-post-id').value;
+            const title = document.getElementById('edit-title').value.trim();
+            const content = document.getElementById('edit-content').value.trim();
+            const image = document.getElementById('edit-image').value.trim();
+            const orgName = this.querySelector('input[name="orgName"]').value;
+            
+            if (!title || !content) {
+                alert('Title and content are required.');
+                return;
+            }
+            
+            // Disable submit button
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+            
+            try {
+                const response = await fetch('/posts/edit/' + postId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        content: content,
+                        image: image,
+                        orgName: orgName
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update the post in the DOM
+                    const postCard = document.getElementById('post-' + postId);
+                    if (postCard) {
+                        // Update title
+                        const titleEl = postCard.querySelector('h3');
+                        if (titleEl) titleEl.textContent = data.post.title;
+                        
+                        // Update content (preserve line breaks)
+                        const contentEl = postCard.querySelector('.post-content');
+                        if (contentEl) {
+                            contentEl.innerHTML = data.post.content.replace(/\n/g, '<br>');
+                        }
+                        
+                        // Update image
+                        const imageEl = postCard.querySelector('.post-image');
+                        if (data.post.image) {
+                            if (imageEl) {
+                                imageEl.src = data.post.image;
+                            } else if (postCard.firstChild) {
+                                // Insert image at the beginning
+                                const newImage = document.createElement('img');
+                                newImage.src = data.post.image;
+                                newImage.alt = data.post.title;
+                                newImage.className = 'post-image lightbox-trigger';
+                                postCard.insertBefore(newImage, postCard.firstChild);
+                                
+                                // Attach lightbox
+                                const lightbox = document.getElementById("js-lightbox");
+                                if (lightbox) {
+                                    newImage.addEventListener('click', () => {
+                                        lightbox.classList.remove("hidden");
+                                        lightbox.querySelector("img").src = newImage.src;
+                                    });
+                                }
+                            }
+                        } else if (imageEl) {
+                            // Remove image if it exists and new image is empty
+                            imageEl.remove();
+                        }
+                    }
+                    
+                    // Close modal
+                    document.getElementById('edit-post-modal').classList.add('hidden');
+                    console.log('Post updated successfully');
+                } else {
+                    const error = await response.json();
+                    alert('Failed to update post: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating post. Please try again.');
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    }
+
+    // Cancel edit button
+    const cancelEdit = document.getElementById('cancel-edit');
+    if (cancelEdit) {
+        cancelEdit.addEventListener('click', function() {
+            const modal = document.getElementById('edit-post-modal');
+            modal.classList.add('hidden');
+            
+            // Reset any posts that might be in edit mode
+            document.querySelectorAll('.post-content.editing').forEach(el => {
+                el.classList.remove('editing');
+                el.contentEditable = false;
+            });
+            
+            // Reset any edit buttons that might say "Save"
+            document.querySelectorAll('.edit-post-btn').forEach(btn => {
+                if (btn.textContent === 'Save') {
+                    btn.textContent = 'Edit';
+                }
+            });
+        });
+    }
+
+    // Also update the click outside to close modal
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('edit-post-modal');
+        if (event.target === modal) {
+            modal.classList.add('hidden');
+            
+            // Reset any posts that might be in edit mode
+            document.querySelectorAll('.post-content.editing').forEach(el => {
+                el.classList.remove('editing');
+                el.contentEditable = false;
+            });
+            
+            // Reset any edit buttons that might say "Save"
+            document.querySelectorAll('.edit-post-btn').forEach(btn => {
+                if (btn.textContent === 'Save') {
+                    btn.textContent = 'Edit';
+                }
+            });
+        }
+    });
+
     // Post visibility
     document.querySelectorAll(".org-post").forEach(post => {
         const actions = post.querySelector(".post-actions");
@@ -112,8 +818,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // ===== CREATE POST BUTTON VISIBILITY =====
+    if (canManagePosts) {
+        if (createBtn) {
+            createBtn.classList.remove("hidden");
+            console.log('Create button should now be visible');
+        } else {
+            console.log('Create button not found in DOM');
+        }
+    }
+
+    // ===== APPLY POST LOGIC FUNCTION =====
     function applyPostLogic(post) {
-        const editBtn = post.querySelector(".edit-post-btn");
         const deleteBtn = post.querySelector(".delete-post-btn");
         const actions = post.querySelector(".post-actions");
         const content = post.querySelector(".post-content");
@@ -156,18 +872,40 @@ document.addEventListener("DOMContentLoaded", async () => {
             actions?.classList.add("hidden");
         }
 
-        editBtn?.addEventListener("click", () => {
-            const editing = content.isContentEditable;
-            content.contentEditable = !editing;
-            editBtn.textContent = editing ? "Edit" : "Save";
-            content.classList.toggle("editing");
-        });
-
-        deleteBtn?.addEventListener("click", () => {
-            if (confirm("Delete this post?")) {
-                post.remove();
-            }
-        });
+        // Delete post functionality
+        if (deleteBtn) {
+            // Remove existing listeners to avoid duplicates
+            const newDeleteBtn = deleteBtn.cloneNode(true);
+            deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
+            
+            newDeleteBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                if (confirm("Delete this post?")) {
+                    const postId = post.id.replace('post-', '');
+                    
+                    fetch('/posts/delete/' + postId, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orgName: 'Archers for UNICEF'
+                        })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            post.remove();
+                        } else {
+                            alert('Failed to delete post');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting post');
+                    });
+                }
+            });
+        }
 
         const toggle = post.querySelector(".comment-toggle");
         const comments = post.querySelector(".comments");
@@ -182,19 +920,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.querySelectorAll(".org-post").forEach(applyPostLogic);
 
-    const createBtn = document.getElementById("create-post-btn");
-    const modal = document.getElementById("create-post-modal");
-    const submitPost = document.getElementById("submit-post");
-    const cancelPost = document.getElementById("cancel-post");
-
-    const titleInput = document.getElementById("new-post-title");
-    const contentInput = document.getElementById("new-post-content");
-    const imageInput = document.getElementById("new-post-image");
-
-    const postsContainer = document.querySelector(".org-posts");
-
     if (canManagePosts) {
-        createBtn?.classList.remove("hidden");
+        if (createBtn) {
+            createBtn.classList.remove("hidden");
+            console.log('Create button should now be visible');
+        } else {
+            console.log('Create button not found in DOM');
+        }
     }
 
     createBtn?.addEventListener("click", () => {
@@ -211,97 +943,106 @@ document.addEventListener("DOMContentLoaded", async () => {
     submitPost?.addEventListener("click", () => {
         const title = titleInput?.value.trim();
         const content = contentInput?.value.trim();
+        const imageUrl = imageInput?.value.trim(); // Get the URL instead of file
 
         if (!title || !content) {
             alert("Title and content are required.");
             return;
         }
 
-        if (imageInput?.files && imageInput.files[0]) {
-            const reader = new FileReader();
+        // Disable button to prevent double submission
+        submitPost.disabled = true;
+        submitPost.textContent = 'Creating...';
 
-            reader.onload = function (e) {
-                createPost(e.target.result, title, content);
-            };
-
-            reader.readAsDataURL(imageInput.files[0]);
-        } else {
-            createPost("", title, content);
-        }
+        // Send as JSON
+        fetch('/posts/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title,
+                content: content,
+                image: imageUrl || "", // Use the URL directly, empty string if none
+                orgName: 'Archers for UNICEF'
+            })
+        })
+        .then(response => {
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json().then(data => {
+                    if (data.success) {
+                        // Clear the form
+                        titleInput.value = "";
+                        contentInput.value = "";
+                        imageInput.value = "";
+                        modal?.classList.add("hidden");
+                        // Reload to show the new post
+                        window.location.reload();
+                    } else {
+                        alert('Error creating post: ' + (data.error || 'Unknown error'));
+                    }
+                });
+            } else {
+                // If not JSON, it was a redirect - success!
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to create post. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable the submit button
+            submitPost.disabled = false;
+            submitPost.textContent = 'Post';
+        });
     });
 
     function createPost(imageSrc, title, content) {
         if (!postsContainer) return;
 
-        const post = document.createElement("article");
-        post.className = "org-post";
-
-        post.innerHTML = `
-            ${imageSrc ? `<img src="${imageSrc}" class="post-image lightbox-trigger">` : ""}
-            <div class="post-header">
-                <h3>${title}</h3>
-                <div class="post-actions ${canManagePosts ? "" : "hidden"}">
-                    <button class="edit-post-btn">Edit</button>
-                    <button class="delete-post-btn">Delete</button>
-                </div>
-            </div>
-            <span class="post-date">Just now</span>
-            <div class="post-content">${content}</div>
-            <button class="comment-toggle">View comments</button>
-            <div class="comments hidden"></div>
-            <div class="add-comment hidden">
-                <textarea class="comment-input" placeholder="Write a comment..."></textarea>
-                <button class="submit-comment">Post</button>
-            </div>
-            <p class="login-warning hidden">Log in to add a comment.</p>
-        `;
-
-        postsContainer.prepend(post);
-        applyPostLogic(post);
-
-        const addCommentBox = post.querySelector(".add-comment");
-        const warning = post.querySelector(".login-warning");
-        const submitBtn = post.querySelector(".submit-comment");
-        const textarea = post.querySelector(".comment-input");
-        const commentsContainer = post.querySelector(".comments");
-
-        if (isLoggedIn) {
-            addCommentBox?.classList.remove("hidden");
-            warning?.classList.add("hidden");
-        } else {
-            addCommentBox?.classList.add("hidden");
-            warning?.classList.remove("hidden");
-        }
-
-        submitBtn?.addEventListener("click", () => {
-            const text = textarea.value.trim();
-            if (!text) return;
-
-            const comment = document.createElement("div");
-            comment.className = "comment";
-            comment.dataset.owner = currentUser;
-
-            comment.innerHTML = `
-                <strong>${displayName}</strong>
-                <p class="comment-text">${text}</p>
-                <div class="comment-actions hidden">
-                    <button class="edit-comment-btn">Edit</button>
-                    <button class="delete-comment-btn">Delete</button>
-                </div>
-            `;
-
-            commentsContainer.appendChild(comment);
-            textarea.value = "";
-
-            applyCommentPermissions(comment);
+        // Send to server first
+        fetch('/posts/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title,
+                content: content,
+                image: imageSrc,
+                orgName: 'Archers for UNICEF'
+            })
+        })
+        .then(response => {
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json().then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Error creating post: ' + (data.error || 'Unknown error'));
+                    }
+                });
+            } else {
+                // If not JSON, it's probably a redirect - success!
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to create post. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable the submit button
+            if (submitPost) {
+                submitPost.disabled = false;
+                submitPost.textContent = 'Post';
+            }
         });
-
-        post.querySelectorAll(".lightbox-trigger").forEach(attachLightbox);
-
-        modal?.classList.add("hidden");
-        if (titleInput) titleInput.value = "";
-        if (contentInput) contentInput.value = "";
-        if (imageInput) imageInput.value = "";
     }
 });
 

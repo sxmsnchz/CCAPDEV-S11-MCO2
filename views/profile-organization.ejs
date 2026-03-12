@@ -303,7 +303,21 @@
                 }
 
                 function managePosts() {
-                    window.location.href = "/org1";
+                    // Map organization emails to their respective org pages
+                    const orgPageMap = {
+                        'au@dlsu.edu.ph': '/org1',
+                        'cso@dlsu.edu.ph': '/org2',
+                        'iso@dlsu.edu.ph': '/org3',
+                        'lscs@dlsu.edu.ph': '/org4',
+                        'mafia@dlsu.edu.ph': '/org5'
+                    };
+                    
+                    // Get the current user's email
+                    const userEmail = currentOrgUser.email || '';
+                    
+                    // Redirect to the appropriate org page, default to org1 if not found
+                    const redirectUrl = orgPageMap[userEmail] || '/org1';
+                    window.location.href = redirectUrl;
                 }
 
                 function viewAnalytics() {
@@ -344,14 +358,15 @@
                 });
 
                 async function loadPostCount() {
-
-                const page = window.location.pathname.replace("/", "");
-                fetch(`/org/posts-count/${page}`)
-
-                const data = await res.json();
-
-                document.getElementById("postsCount").textContent = data.count;
-
+                    try {
+                        const page = window.location.pathname.replace("/", "");
+                        const response = await fetch(`/org/posts-count/${page}`);
+                        const data = await response.json();
+                        document.getElementById("postsCount").textContent = data.count;
+                    } catch (error) {
+                        console.error("Error loading post count:", error);
+                        document.getElementById("postsCount").textContent = "0";
+                    }
                 }
 
             </script>
