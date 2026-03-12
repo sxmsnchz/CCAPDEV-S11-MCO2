@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<!--
+    references:
+    - images from: DLSU AU (Facebook Page) https://www.facebook.com/DLSUAU
+    - https://www.w3schools.com/html/html_images.asp
+    - https://www.freecodecamp.org/news/how-to-work-with-images-in-html/
+    - https://codingartistweb.com/2024/12/image-gallery-with-lightbox-effect-using-html-css-and-javascript/
+-->
+<html>
+    <head>
+        <title>Archers for UNICEF (AU) | OrgSpace</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+
+    <body data-org="au@dlsu.edu.ph">
+        <main>
+            <nav id="menu">
+                <span class="menu-title">DLSU Organizations</span>
+                <input type="checkbox" id="responsive-menu"><label></label>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a class="dropdown-arrow active" href="#organizations">Organizations</a>
+                        <ul class="sub-menus">
+                            <li><a href="/org1">Archers for UNICEF</a></li>
+                            <li><a href="/org2">Council of Student Organizations</a></li>
+                            <li><a href="/org3">Information Security Organization</a></li>
+                            <li><a href="/org4">La Salle Computer Society</a></li>
+                            <li><a href="/org5">Management of Financial Institutions Association</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/contact">Contact Us</a></li>
+
+
+                    <li class="menu-profile" id="profileMenu">
+                        <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
+                        <img src="/assets/profile-icon.png" alt="Account" class="profile-icon">
+                        </button>
+
+                        <ul class="profile-dropdown" id="profileDropdown" role="menu" aria-label="Account menu"></ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <section class="org-header">
+                <div class="org-header-inner">
+                    <img src="/assets/AU_logo1.png" alt="Archers for UNICEF Logo" class="org-logo">
+
+                    <div class="org-header-text">
+                        <h1>Archers for UNICEF (AU)</h1>
+                        <p class="org-tagline">
+                            Always for the women and children.
+                        </p>
+                        <span class="org-category">Volunteer Organization</span>
+
+                        <a href="/reviews1" class="reviews-btn">See Reviews</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="org-body">
+                
+                <div class="org-highlights">
+                    <img src="/assets/AU1.jpg" alt="AU Highlight 1" class="lightbox-trigger">
+                    <img src="/assets/AU2.jpg" alt="AU Highlight 2" class="lightbox-trigger">
+                    <img src="/assets/AU3.jpg" alt="AU Highlight 3" class="lightbox-trigger">
+                </div>
+
+                <div class="org-split">
+                    <div class="org-main">
+
+                        <div class="org-section">
+                            <h2>About the Organization</h2>
+                            <p>
+                                Archers for UNICEF of De La Salle University-Manila is a non-profit organization that envisions a brighter 
+                                and more inclusive future for Filipino youth and women. Reflecting the mission of its partner organization, 
+                                AU continues to spearhead initiatives centered on advocating for the rights and well-being of children 
+                                while achieving a holistic society supported by equitable opportunities.
+                                <br><br>
+                                AU envisions a brighter future for the Filipino youth and women through integration of Lasallian values depicted 
+                                in various charitable endeavors. An organization dedicated to making a difference that will sustain its 
+                                objectives and goals in hopes of achieving a holistic society that will prioritize the rights of the people.
+                            </p>
+                        </div>
+
+                        <div class="org-section">
+                            <h2>Organization History</h2>
+                            <p>
+                            Archers for UNICEF (AU) was officially accredited by De La Salle University in 2017. At the time, only a few universities 
+                            in the country — such as the University of the Philippines, University of Santo Tomas, and Ateneo de Manila University — 
+                            had student organizations that worked closely with UNICEF. Seeing this gap within DLSU, then-sophomore Danielle Solancho 
+                            recognized the need for an organization that could represent both the University's values and UNICEF's mission.
+                            <br><br>
+                            Driven by her long-standing involvement in student organizations and her passion for service, Danielle actively sought 
+                            opportunities to volunteer beyond the University. She reached out to various non-profit organizations, including UNICEF, 
+                            hoping to gain experience and contribute meaningfully. However, these efforts were often met with rejection or no response 
+                            at all. Rather than discouraging her, these setbacks highlighted the lack of accessible avenues for students who genuinely 
+                            wanted to serve.
+                            <br><br>
+                            When the opportunity to establish a new organization in DLSU arose, Danielle took it as a sign to move forward. With careful 
+                            planning, extensive paperwork, and the support of her family, she began laying the foundation for Archers for UNICEF. After 
+                            a series of discussions and coordination, UNICEF eventually agreed to partner with DLSU, marking the official beginning of AU. 
+                            Since then, the organization has grown into a space where students can actively engage in advocacy, give back to marginalized 
+                            communities, and take part in initiatives that aim to create meaningful and lasting impact.
+                            </p>
+                        </div>
+                    </div>
+
+                    <aside class="org-aside">
+                        <div class="org-section">
+                            <h2>Current Board</h2>
+                            <div class="board-cards">
+
+                                <div class="board-card">
+                                    <h4>Cherubim Citco</h4>
+                                    <span>President</span>
+                                </div>
+
+                                <div class="board-card">
+                                    <h4>Aiella Evangelista</h4>
+                                    <span>EVP - Internal Affairs</span>
+                                </div>
+
+                                <div class="board-card">
+                                    <h4>Grace Gonzales</h4>
+                                    <span>EVP - External Affairs</span>
+                                </div>
+
+                                <div class="board-card">
+                                    <h4>Karll Cueto</h4>
+                                    <span>EVP - Integrated Marketing Communications</span>
+                                </div>
+
+                                <div class="board-card">
+                                    <h4>Aryanna Infante</h4>
+                                    <span>EVP - Operations</span>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                </div>
+                
+                <button id="create-post-btn" class="create-post hidden"> Create Post </button>
+                
+                <div class="org-posts">
+                    <% if (posts && posts.length > 0) { %>
+                        <% posts.forEach(function(post) { %>
+                            <article class="org-post" id="post-<%= post._id %>">
+                                <% if (post.image) { %>
+                                <img src="<%= post.image %>"
+                                    alt="<%= post.title %>"
+                                    class="post-image lightbox-trigger">
+                                <% } %>
+
+                                <div class="post-header">
+                                    <h3><%= post.title %></h3>
+                                    <div class="post-actions" style="display: flex; gap: 10px; align-items: center;">
+                                        <!-- Like Button - FOR ALL LOGGED IN USERS -->
+                                        <% if (user) { %>
+                                            <% 
+                                                let userLiked = false;
+                                                if (post.likes) {
+                                                    userLiked = post.likes.some(function(like) {
+                                                        return like.toString() === user.id.toString();
+                                                    });
+                                                }
+                                            %>
+                                            <button class="like-btn" 
+                                                    data-post-id="<%= post._id %>"
+                                                    data-liked-by-user="<%= userLiked %>"
+                                                    style="display: inline-flex; align-items: center; gap: 5px; background: none; border: 1px solid #046307; padding: 5px 10px; border-radius: 20px; color: #046307; cursor: pointer;">
+                                                ❤️ <span class="like-count"><%= post.likes ? post.likes.length : 0 %></span>
+                                            </button>
+                                        <% } %>
+                                        
+                                        <!-- Triple Dot Menu - ONLY FOR ORG OWNER -->
+                                        <% if (user && user.userType === 'organization' && user.email === 'au@dlsu.edu.ph') { %>
+                                            <div class="post-menu-container" style="position: relative;">
+                                                <button class="post-menu-trigger" style="background: none; border: none; font-size: 20px; cursor: pointer; padding: 0 5px;">⋮</button>
+                                                <div class="post-dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 100;">
+                                                    <button class="edit-post-btn" onclick="showEditPostModal('<%= post._id %>')" style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; cursor: pointer; white-space: nowrap;">Edit</button>
+                                                    <form action="/posts/delete/<%= post._id %>" method="POST" style="margin: 0;">
+                                                        <input type="hidden" name="orgName" value="Archers for UNICEF">
+                                                        <button type="submit" class="delete-post-btn" onclick="return confirm('Are you sure?')" style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; cursor: pointer; color: #c0392b;">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                
+                                <span class="post-date"><%= new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                                
+                                <div class="post-content">
+                                    <%- post.content.replace(/\n/g, '<br>') %>
+                                </div>
+
+                                <button class="comment-toggle">View comments</button>
+                                <div class="comments hidden">
+                                    <% 
+                                        // Filter comments for this post
+                                        var postComments = [];
+                                        if (comments && comments.length > 0) {
+                                            postComments = comments.filter(function(c) { 
+                                                return c.post && c.post.toString() === post._id.toString(); 
+                                            });
+                                        }
+                                    %>
+                                    
+                                    <% if (postComments.length > 0) { %>
+                                        <% postComments.forEach(function(comment) { %>
+                                            <div class="comment" data-owner="<%= comment.user ? comment.user._id : '' %>">
+                                                <div class="comment-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <strong style="color: #046307;">
+                                                        <% if (comment.user) { %>
+                                                            <% if (comment.user.userType === "admin") { %>
+                                                                Admin
+                                                            <% } else if (comment.user.userType === "organization") { %>
+                                                                <%= comment.user.orgName %>
+                                                            <% } else { %>
+                                                                <%= comment.user.firstName %> <%= comment.user.lastName %>
+                                                            <% } %>
+                                                        <% } else { %>
+                                                            User
+                                                        <% } %>
+                                                    </strong>
+                                                    
+                                                    <!-- Triple Dot Menu - FOR COMMENT OWNER OR ADMIN -->
+                                                    <% if (user && comment.user && (comment.user._id.toString() === user.id || user.userType === "admin")) { %>
+                                                        <div class="comment-menu-container" style="position: relative;">
+                                                            <button class="comment-menu-trigger" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 0 5px;">⋮</button>
+                                                            <div class="comment-dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 100;">
+                                                                <button class="edit-comment-btn" style="display: block; width: 100%; text-align: left; padding: 6px 12px; background: none; border: none; cursor: pointer; white-space: nowrap;">Edit</button>
+                                                                <form action="/delete-comment/<%= comment._id %>" method="POST" style="margin: 0;">
+                                                                    <button type="submit" class="delete-comment-btn" onclick="return confirm('Delete this comment?')" style="display: block; width: 100%; text-align: left; padding: 6px 12px; background: none; border: none; cursor: pointer; color: #c0392b;">Delete</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                
+                                                <p class="comment-text"><%= comment.text %></p>
+                                                
+                                                <form action="/edit-comment/<%= comment._id %>" method="POST" class="edit-comment-form hidden">
+                                                    <input type="text" name="text" value="<%= comment.text %>" required>
+                                                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                                        <button type="submit" class="save-comment-btn" style="background: #046307; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Save</button>
+                                                        <button type="button" class="cancel-comment-edit-btn" style="background: #f0f0f0; color: #666; border: 1px solid #ddd; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p>No comments yet.</p>
+                                    <% } %>
+
+                                    <% if (user) { %>
+                                        <form action="/add-comment" method="POST" class="add-comment">
+                                            <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
+                                            <input type="hidden" name="page" value="org1">
+                                            <input type="hidden" name="postId" value="<%= post._id %>">
+                                            <button type="submit" class="submit-comment">Post</button>
+                                        </form>
+                                    <% } else { %>
+                                        <p class="login-warning"><a href="/login">Log in</a> to add a comment.</p>
+                                    <% } %>
+                                </div>
+                            </article>
+                        <% }); %>
+                    <% } else { %>
+                        <p class="no-posts">No posts yet.</p>
+                    <% } %>
+                </div>
+            </section>
+        </main>
+
+        <div id="create-post-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Create New Post</h3>
+                
+                <input type="text" id="new-post-title" placeholder="Post title">
+                
+                <textarea id="new-post-content" placeholder="Write your announcement..."></textarea>
+                
+                <!-- Image selection area -->
+                <div class="image-selection-area">
+                    <button type="button" id="select-image-btn" class="btn-secondary">Choose Image</button>
+                    <span id="selected-image-name">No image selected</span>
+                    <input type="hidden" id="new-post-image" value="">
+                </div>
+                
+                <!-- Image preview -->
+                <div id="image-preview" style="display: none; margin-top: 10px;">
+                    <img src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+                    <button type="button" id="remove-image-btn" class="btn-small" style="margin-top: 5px;">Remove</button>
+                </div>
+                
+                <div class="modal-actions">
+                    <button id="submit-post">Post</button>
+                    <button id="cancel-post">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Post Modal -->
+        <div id="edit-post-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Edit Post</h3>
+                <form id="edit-post-form">  <!-- Removed action and method -->
+                    <input type="hidden" name="orgName" value="Archers for UNICEF">
+                    <input type="hidden" name="postId" id="edit-post-id"> <!-- Add this -->
+                    
+                    <div class="form-group">
+                        <label for="edit-title">Title:</label>
+                        <input type="text" name="title" id="edit-title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-content">Content:</label>
+                        <textarea name="content" id="edit-content" rows="6" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-image">Image URL:</label>
+                        <input type="text" name="image" id="edit-image" placeholder="/assets/post-image.jpg">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="submit" id="save-edit-post" class="btn-primary">Save Changes</button>
+                        <button type="button" id="cancel-edit" class="btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Image Selector Modal -->
+        <div id="image-selector-modal" class="modal hidden">
+            <div class="modal-content" style="max-width: 800px;">
+                <h3>Select an Image</h3>
+                
+                <div class="image-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; max-height: 400px; overflow-y: auto;">
+                    <!-- Images will be loaded here dynamically -->
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" id="close-image-selector" class="btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="js-lightbox" class="js-lightbox hidden">
+            <span class="js-lightbox-close">&times;</span>
+            <img src="" alt="Expanded view">
+        </div>
+
+        <script src="/script.js"></script>
+        
+    </body>
+</html>

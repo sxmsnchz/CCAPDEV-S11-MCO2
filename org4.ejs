@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<!--
+    references:
+    - https://www.w3schools.com/html/html_images.asp
+    - https://www.freecodecamp.org/news/how-to-work-with-images-in-html/
+    - https://codingartistweb.com/2024/12/image-gallery-with-lightbox-effect-using-html-css-and-javascript/
+-->
+<html>
+    <head>
+        <title>La Salle Computer Society (LSCS) | OrgSpace</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+
+    <body data-org="lscs@dlsu.edu.ph">
+        <main>
+            <nav id="menu">
+                <span class="menu-title">DLSU Organizations</span>
+                <input type="checkbox" id="responsive-menu"><label></label>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a class="dropdown-arrow active" href="#organizations">Organizations</a>
+                        <ul class="sub-menus">
+                            <li><a href="/org1">Archers for UNICEF</a></li>
+                            <li><a href="/org2">Council of Student Organizations</a></li>
+                            <li><a href="/org3">Information Security Organization</a></li>
+                            <li><a href="/org4">La Salle Computer Society</a></li>
+                            <li><a href="/org5">Management of Financial Institutions Association</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/contact">Contact Us</a></li>
+
+                    <li class="menu-profile" id="profileMenu">
+                        <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
+                        <img src="/assets/profile-icon.png" alt="Account" class="profile-icon">
+                        </button>
+
+                        <ul class="profile-dropdown" id="profileDropdown" role="menu" aria-label="Account menu"></ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <section class="org-header">
+                <div class="org-header-inner">
+                    <img src="/assets/lscs_logo1.png" alt="LSCS Logo" class="org-logo">
+
+                    <div class="org-header-text">
+                        <h1>La Salle Computer Society (LSCS)</h1>
+                        <p class="org-tagline">
+                            Living Yesterday's Vision. Setting Today's Trends. Inspiring Tomorrow's Leaders.
+                        </p>
+                        <span class="org-category">Academic Organization</span>
+
+                        <a href="/reviews4" class="reviews-btn">See Reviews</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="org-body">
+                
+                <div class="org-highlights">
+                    <img src="/assets/LSCS1.jpg" alt="LSCS Highlight 1" class="lightbox-trigger">
+                    <img src="/assets/LSCS2.jpg" alt="LSCS Highlight 2" class="lightbox-trigger">
+                    <img src="/assets/LSCS3.jpg" alt="LSCS Highlight 3" class="lightbox-trigger">
+                </div>
+
+                <div class="org-split">
+                    <div class="org-main">
+                        <div class="org-section">
+                            <h2>About the Organization</h2>
+                            <p>
+                                La Salle Computer Society (LSCS) is DLSU's largest and pioneering technological organization and the home organization of the College of Computer Studies.
+                                LSCS is committed to help students learn more about tech through interactive workshops, make new friends with recreational events, develop their leadership
+                                skills through the esteemed Junior Officer Training Program, secure a job through various career events, and more.
+                                Now in its 40th year of service, LSCS continues to ignite, innovate, and inspire.
+                            </p>
+                        </div>
+
+                        <div class="org-section">
+                            <h2>Vision</h2>
+                            <p>
+                                We envision the La Salle Computer Society to be an organization that, through quality assistance and activities, will mold its members academically,
+                                socially and spiritually in order for them to become competent Lasallian students and well-rounded individuals.
+                                We also strive to continuously serve as the pioneering student organization of the De La Salle University Manila
+                                that strongly symbolizes the expertise of the College of Computer Studies (CCS).
+                            </p>
+                        </div>
+
+                        <div class="org-section">
+                            <h2>Mission</h2>
+                            <p>The La Salle Computer Society shall serve as a venue for growth and development of its members through a three-step course of:</p>
+                            
+                            <h4>Purpose</h4>
+                            <ul class="indented-list">
+                                <li>To know and understand the reason behind every act, decision, and endeavor pursued.</li>
+                            </ul>
+                            
+                            <h4>Process</h4>
+                            <ul class="indented-list">
+                                <li>To organize and oversee the entire procedure of every project and make sure that each goes through every necessary step towards the purpose.</li>
+                            </ul>
+                            
+                            <h4>Excellence</h4>
+                            <ul class="indented-list">
+                                <li>To accomplish our goals in the best way possible and in accordance with the ideals of the organization and of De La Salle University Manila.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <aside class="org-aside">
+                        <div class="org-section">
+                            <h2>Current Board</h2>
+                            <div class="board-cards">
+                                <div class="board-card">
+                                    <h4>Fiona Amaia Tano</h4>
+                                    <span>President</span>
+                                </div>
+                                <div class="board-card">
+                                    <h4>Ana Gabrielle Luis Casas</h4>
+                                    <span>Executive Vice President for Internals</span>
+                                </div>
+                                <div class="board-card">
+                                    <h4>Donita Jane Taguibao</h4>
+                                    <span>Executive Vice President for Externals</span>
+                                </div>
+                                <div class="board-card">
+                                    <h4>Samantha Breanne Sanchez</h4>
+                                    <span>Executive Vice President for Documentation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+                
+                <button id="create-post-btn" class="create-post hidden">Create Post</button>
+
+                <div class="org-section">
+                    <h2>Announcements & Updates</h2>
+
+                    <div class="org-posts">
+                        <% if (posts && posts.length > 0) { %>
+                            <% posts.forEach(function(post) { %>
+                                <article class="org-post" id="post-<%= post._id %>">
+                                    <% if (post.image) { %>
+                                        <img src="<%= post.image %>" alt="<%= post.title %>" class="post-image lightbox-trigger">
+                                    <% } %>
+                                    
+                                    <div class="post-header">
+                                        <h3><%= post.title %></h3>
+                                        <div class="post-actions" style="display: flex; gap: 10px; align-items: center;">
+                                            <!-- Like Button -->
+                                            <% if (user) { %>
+                                                <% let userLiked = false; %>
+                                                <% if (post.likes) { %>
+                                                    <% userLiked = post.likes.some(function(like) { %>
+                                                        <% return like.toString() === user.id.toString(); %>
+                                                    <% }); %>
+                                                <% } %>
+                                                <button class="like-btn" 
+                                                    data-post-id="<%= post._id %>"
+                                                    data-liked-by-user="<%= userLiked %>"
+                                                    style="display: inline-flex; align-items: center; gap: 5px; background: none; border: 1px solid #046307; padding: 5px 10px; border-radius: 20px; color: #046307; cursor: pointer;">
+                                                    ❤️ <span class="like-count"><%= post.likes ? post.likes.length : 0 %></span>
+                                                </button>
+                                            <% } %>
+                                            
+                                            <!-- Triple Dot Menu -->
+                                            <% if (user && user.userType === 'organization' && user.email === 'lscs@dlsu.edu.ph') { %>
+                                                <div class="post-menu-container" style="position: relative;">
+                                                    <button class="post-menu-trigger" style="background: none; border: none; font-size: 20px; cursor: pointer; padding: 0 5px;">⋮</button>
+                                                    <div class="post-dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 100;">
+                                                        <button class="edit-post-btn" onclick="showEditPostModal('<%= post._id %>')" style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; cursor: pointer; white-space: nowrap;">Edit</button>
+                                                        <form action="/posts/delete/<%= post._id %>" method="POST" style="margin: 0;">
+                                                            <input type="hidden" name="orgName" value="La Salle Computer Society">
+                                                            <button type="submit" class="delete-post-btn" onclick="return confirm('Are you sure?')" style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; cursor: pointer; color: #c0392b;">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    
+                                    <span class="post-date"><%= new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                                    
+                                    <div class="post-content">
+                                        <%- post.content.replace(/\n/g, '<br>') %>
+                                    </div>
+                                    
+                                    <button class="comment-toggle">View comments</button>
+                                    <div class="comments hidden">
+                                        <% 
+                                            let postComments = [];
+                                            if (comments && comments.length > 0) {
+                                                postComments = comments.filter(function(c) {
+                                                    return c.post && c.post.toString() === post._id.toString();
+                                                });
+                                            }
+                                        %>
+                                        <% if (postComments.length > 0) { %>
+                                            <% postComments.forEach(function (comment) { %>
+                                                <div class="comment" data-owner="<%= comment.user ? comment.user._id : '' %>">
+                                                    <div class="comment-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                                        <strong style="color: #046307;">
+                                                            <% if (comment.user) { %>
+                                                                <% if (comment.user.userType === "admin") { %>
+                                                                    Admin
+                                                                <% } else if (comment.user.userType === "organization") { %>
+                                                                    <%= comment.user.orgName %>
+                                                                <% } else { %>
+                                                                    <%= comment.user.firstName %> <%= comment.user.lastName %>
+                                                                <% } %>
+                                                            <% } else { %>
+                                                                User
+                                                            <% } %>
+                                                        </strong>
+                                                        
+                                                        <% if (user && comment.user && (comment.user._id.toString() === user.id || user.userType === "admin")) { %>
+                                                            <div class="comment-menu-container" style="position: relative;">
+                                                                <button class="comment-menu-trigger" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 0 5px;">⋮</button>
+                                                                <div class="comment-dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 100;">
+                                                                    <button class="edit-comment-btn" style="display: block; width: 100%; text-align: left; padding: 6px 12px; background: none; border: none; cursor: pointer; white-space: nowrap;">Edit</button>
+                                                                    <form action="/delete-comment/<%= comment._id %>" method="POST" style="margin: 0;">
+                                                                        <button type="submit" class="delete-comment-btn" onclick="return confirm('Delete this comment?')" style="display: block; width: 100%; text-align: left; padding: 6px 12px; background: none; border: none; cursor: pointer; color: #c0392b;">Delete</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+                                                    <p class="comment-text"><%= comment.text %></p>
+                                                    
+                                                    <form action="/edit-comment/<%= comment._id %>" method="POST" class="edit-comment-form hidden">
+                                                        <input type="text" name="text" value="<%= comment.text %>" required>
+                                                        <div class="comment-edit-actions" style="display: flex; gap: 10px; margin-top: 10px;">
+                                                            <button type="submit" class="save-comment-btn" style="background: #046307; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Save</button>
+                                                            <button type="button" class="cancel-comment-edit-btn" style="background: #f0f0f0; color: #666; border: 1px solid #ddd; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <p>No comments yet.</p>
+                                        <% } %>
+                                        
+                                        <% if (user) { %>
+                                            <form action="/add-comment" method="POST" class="add-comment">
+                                                <textarea name="text" class="comment-input" placeholder="Write a comment..."></textarea>
+                                                <input type="hidden" name="page" value="org4">
+                                                <input type="hidden" name="postId" value="<%= post._id %>">
+                                                <button type="submit" class="submit-comment">Post</button>
+                                            </form>
+                                        <% } else { %>
+                                            <p class="login-warning"><a href="/login">Log in</a> to add a comment.</p>
+                                        <% } %>
+                                    </div>
+                                </article>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="no-posts">No posts yet.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Edit Post Modal -->
+        <div id="edit-post-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Edit Post</h3>
+                <form id="edit-post-form">
+                    <input type="hidden" name="orgName" value="La Salle Computer Society">
+                    <input type="hidden" name="postId" id="edit-post-id">
+                    
+                    <div class="form-group">
+                        <label for="edit-title">Title:</label>
+                        <input type="text" name="title" id="edit-title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-content">Content:</label>
+                        <textarea name="content" id="edit-content" rows="6" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-image">Image URL:</label>
+                        <input type="text" name="image" id="edit-image" placeholder="/assets/post-image.jpg">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                        <button type="button" id="cancel-edit" class="btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Create Post Modal -->
+        <div id="create-post-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Create New Post</h3>
+                
+                <input type="text" id="new-post-title" placeholder="Post title">
+                
+                <textarea id="new-post-content" placeholder="Write your announcement..."></textarea>
+                
+                <!-- Image selection area -->
+                <div class="image-selection-area">
+                    <button type="button" id="select-image-btn" class="btn-secondary">Choose Image</button>
+                    <span id="selected-image-name">No image selected</span>
+                    <input type="hidden" id="new-post-image" value="">
+                </div>
+                
+                <!-- Image preview -->
+                <div id="image-preview" style="display: none; margin-top: 10px;">
+                    <img src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+                    <button type="button" id="remove-image-btn" class="btn-small" style="margin-top: 5px;">Remove</button>
+                </div>
+                
+                <div class="modal-actions">
+                    <button id="submit-post">Post</button>
+                    <button id="cancel-post">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Selector Modal -->
+        <div id="image-selector-modal" class="modal hidden">
+            <div class="modal-content" style="max-width: 800px;">
+                <h3>Select an Image</h3>
+                <div class="image-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; max-height: 400px; overflow-y: auto;">
+                    <!-- Images will be loaded here dynamically -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="close-image-selector" class="btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="js-lightbox" class="js-lightbox hidden">
+            <span class="js-lightbox-close">&times;</span>
+            <img src="" alt="Expanded view">
+        </div>
+
+        <script src="/script.js"></script>
+    </body>
+</html>

@@ -73,6 +73,10 @@ The database stores information such as:
   
 - Org logins:
 - au@dlsu.edu.ph / password123
+- cso@dlsu.edu.ph / password123
+- iso@dlsu.edu.ph / password123
+- lscs@dlsu.edu.ph / password123
+- mafia@dlsu.edu.ph / password123
   
 - Admin login:
 - admin@orgspace.dlsu.edu.ph / admin123

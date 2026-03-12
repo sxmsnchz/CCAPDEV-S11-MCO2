@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Organization Profile - OrgSpace</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+
+    <body>
+        <main>
+            <nav id="menu">
+                <span class="menu-title">DLSU Organizations</span>
+                <input type="checkbox" id="responsive-menu"><label></label>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a class="dropdown-arrow" href="#organizations">Organizations</a>
+                        <ul class="sub-menus">
+                            <li><a href="/org1">Archers for UNICEF</a></li>
+                            <li><a href="/org2">Council of Student Organizations</a></li>
+                            <li><a href="/org3">Information Security Organization</a></li>
+                            <li><a href="/org4">La Salle Computer Society</a></li>
+                            <li><a href="/org5">Management of Financial Institutions Association</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li class="menu-profile" id="profileMenu">
+                        <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
+                            <img src="/assets/profile-icon.png" alt="Account" class="profile-icon">
+                        </button>
+                        <ul class="profile-dropdown" id="profileDropdown" role="menu" aria-label="Account menu"></ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="profile-container" id="profileContent" style="display: none;">
+                <div class="profile-header" style="display: flex; align-items: center; gap: 30px;">
+                    <img id="orgLogo" src="" alt="Organization Logo" class="profile-pic-large">
+                    <div>
+                        <h1 id="orgName" style="color: white; margin-bottom: 10px;"></h1>
+                        <p id="orgTagline" style="font-size: 1.1rem; opacity: 0.9;"></p>
+                        <div class="profile-actions">
+                            <button onclick="openEditModal()" class="btn-action">✏️ Edit Profile</button>
+                            <button onclick="managePosts()" class="btn-action">📝 Manage Posts</button>
+                            <button onclick="viewAnalytics()" class="btn-action">📊 View Analytics</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>👥</div>
+                        <h4 id="membersCount">0</h4>
+                        <p>Total Members</p>
+                    </div>
+                    <div class="stat-card">
+                        <div>📅</div>
+                        <h4 id="eventsCount">0</h4>
+                        <p>Upcoming Events</p>
+                    </div>
+                    <div class="stat-card">
+                        <div>💬</div>
+                        <h4 id="postsCount">0</h4>
+                        <p>Total Posts</p>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>About Us</h3>
+                        <p id="orgDescription"></p>
+                        <div style="margin-top: 20px;">
+                            <h4 style="color: #046307; margin-bottom: 10px;">Organization Type</h4>
+                            <span class="tag" id="orgType"></span>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Contact Information</h3>
+                        <p><strong>📧 Email:</strong> <span id="contactEmail"></span></p>
+                        <p><strong>👑 President:</strong> <span id="orgPresident"></span></p>
+                        <div style="margin-top: 20px;">
+                            <h4 style="color: #046307; margin-bottom: 10px;">Social Media</h4>
+                            <div id="socialMediaTags"></div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Key Members</h3>
+                        <ul class="members-list" id="keyMembersList"></ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Recent Activities</h3>
+                        <div id="recentActivities">
+                            <p>🎯 <strong>2nd General Assembly</strong> - Jan 21, 2026</p>
+                            <p>🤝 <strong>World Children's Day</strong> - Nov 20, 2025</p>
+                            <p>🌟 <strong>MAUgic in Motion Workshop</strong> - Nov 22, 2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #e9f5e9; padding: 25px; border-radius: 14px; border: 2px solid #046307; margin-top: 30px;">
+                
+                </div>
+            </div>
+
+            <div id="loadingMessage" style="text-align: center; padding: 50px;">
+                <p>Loading organization profile...</p>
+            </div>
+
+            <div id="editModal" class="modal-overlay" style="display: none;">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeEditModal()">&times;</span>
+                    <h2>Edit Organization Profile</h2>
+                    <form id="editOrgForm">
+                        <div class="form-group">
+                            <label for="editOrgName">Organization Name</label>
+                            <input type="text" id="editOrgName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editOrgDesc">Description</label>
+                            <textarea id="editOrgDesc" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editTagline">Tagline</label>
+                            <input type="text" id="editTagline">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPresident">President</label>
+                            <input type="text" id="editPresident" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editContactEmail">Contact Email</label>
+                            <input type="email" id="editContactEmail" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editOrgType">Organization Type</label>
+                            <input type="text" id="editOrgType">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" onclick="closeEditModal()" class="btn-secondary">Cancel</button>
+                            <button type="button" onclick="saveOrgProfile()" class="btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script src="/script.js"></script>
+
+            <script id="user-json" type="application/json">
+                <%- JSON.stringify(user || {}) %>
+            </script>
+
+            <script>
+                let currentOrgUser = {};
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('profileContent').style.display = 'block';
+
+                    const userData = JSON.parse(document.getElementById('user-json').textContent || "{}");
+                    initializeProfile(userData);
+                    loadPostCount();
+                });
+
+                function initializeProfile(user) {
+                    currentOrgUser = user || {};
+
+                    const orgData = {
+                        name: currentOrgUser.orgName || "",
+                        tagline: currentOrgUser.tagline || "",
+                        description: currentOrgUser.description || "",
+                        type: currentOrgUser.orgType || "",
+                        contactEmail: currentOrgUser.email || "",
+                        president: currentOrgUser.president || "",
+                        logo: currentOrgUser.logo || "/assets/default-org.png",
+                        membersCount: currentOrgUser.membersCount || 150,
+                        eventsCount: currentOrgUser.eventsCount || 3,
+                        postsCount: 0,
+                        socialMedia: currentOrgUser.socialMedia || {
+                            facebook: "facebook.com/DLSUAU",
+                            twitter: "@archersforunicef",
+                            instagram: "@archersforunicef"
+                        },
+                        keyMembers: [
+                            { name: currentOrgUser.president || "Organization President", role: "President" },
+                            { name: "Aiella Evangelista", role: "EVP - Internal Affairs" },
+                            { name: "Grace Gonzales", role: "EVP - External Affairs" },
+                            { name: "Karll Cueto", role: "EVP - Integrated Marketing Communications" },
+                            { name: "Aryanna Infante", role: "EVP - Operations" }
+                        ]
+                    };
+
+                    document.getElementById('orgLogo').src = orgData.logo;
+                    document.getElementById('orgName').textContent = orgData.name;
+                    document.getElementById('orgTagline').textContent = orgData.tagline;
+                    document.getElementById('orgDescription').textContent = orgData.description;
+                    document.getElementById('orgType').textContent = orgData.type;
+                    document.getElementById('contactEmail').textContent = orgData.contactEmail;
+                    document.getElementById('orgPresident').textContent = orgData.president;
+                    document.getElementById('membersCount').textContent = orgData.membersCount;
+                    document.getElementById('eventsCount').textContent = orgData.eventsCount;
+                    document.getElementById('postsCount').textContent = orgData.postsCount;
+
+                    const socialContainer = document.getElementById('socialMediaTags');
+                    socialContainer.innerHTML = "";
+
+                    Object.entries(orgData.socialMedia).forEach(([platform, handle]) => {
+                        const tag = document.createElement('span');
+                        tag.className = 'tag social-tag';
+                        tag.textContent = `${platform}: ${handle}`;
+                        socialContainer.appendChild(tag);
+                    });
+
+                    const membersList = document.getElementById('keyMembersList');
+                    membersList.innerHTML = "";
+
+                    orgData.keyMembers.forEach(member => {
+                        const li = document.createElement('li');
+
+                        const nameSpan = document.createElement('span');
+                        nameSpan.textContent = member.name;
+
+                        const roleSpan = document.createElement('span');
+                        roleSpan.className = 'member-role';
+                        roleSpan.textContent = member.role;
+
+                        li.appendChild(nameSpan);
+                        li.appendChild(roleSpan);
+                        membersList.appendChild(li);
+                    });
+                }
+
+                function openEditModal() {
+                    document.getElementById('editOrgName').value = currentOrgUser.orgName || '';
+                    document.getElementById('editOrgDesc').value = currentOrgUser.description || '';
+                    document.getElementById('editTagline').value = currentOrgUser.tagline || '';
+                    document.getElementById('editPresident').value = currentOrgUser.president || '';
+                    document.getElementById('editContactEmail').value = currentOrgUser.email || '';
+                    document.getElementById('editOrgType').value = currentOrgUser.orgType || '';
+
+                    document.getElementById('editModal').style.display = 'flex';
+                }
+
+                function closeEditModal() {
+                    document.getElementById('editModal').style.display = 'none';
+                }
+
+                async function saveOrgProfile() {
+                    const orgName = document.getElementById('editOrgName').value.trim();
+                    const description = document.getElementById('editOrgDesc').value.trim();
+                    const tagline = document.getElementById('editTagline').value.trim();
+                    const president = document.getElementById('editPresident').value.trim();
+                    const email = document.getElementById('editContactEmail').value.trim();
+                    const orgType = document.getElementById('editOrgType').value.trim();
+
+                    if (!orgName || !description || !president || !email) {
+                        alert('All required fields must be filled in.');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch("/edit-profile/organization", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                orgName,
+                                description,
+                                tagline,
+                                president,
+                                email,
+                                orgType
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            currentOrgUser.orgName = orgName;
+                            currentOrgUser.description = description;
+                            currentOrgUser.tagline = tagline;
+                            currentOrgUser.president = president;
+                            currentOrgUser.email = email;
+                            currentOrgUser.orgType = orgType;
+
+                            initializeProfile(currentOrgUser);
+                            closeEditModal();
+                            alert('Organization profile updated successfully!');
+                        } else {
+                            alert(result.message || 'Failed to update organization profile.');
+                        }
+                    } catch (error) {
+                        console.error("Save organization profile error:", error);
+                        alert("Something went wrong while saving the organization profile.");
+                    }
+                }
+
+                function managePosts() {
+                    // Map organization emails to their respective org pages
+                    const orgPageMap = {
+                        'au@dlsu.edu.ph': '/org1',
+                        'cso@dlsu.edu.ph': '/org2',
+                        'iso@dlsu.edu.ph': '/org3',
+                        'lscs@dlsu.edu.ph': '/org4',
+                        'mafia@dlsu.edu.ph': '/org5'
+                    };
+                    
+                    // Get the current user's email
+                    const userEmail = currentOrgUser.email || '';
+                    
+                    // Redirect to the appropriate org page, default to org1 if not found
+                    const redirectUrl = orgPageMap[userEmail] || '/org1';
+                    window.location.href = redirectUrl;
+                }
+
+                function viewAnalytics() {
+                    alert('Opening analytics dashboard...');
+                }
+
+                function createNewPost() {
+                    alert('Opening post creator...');
+                }
+
+                function manageEvents() {
+                    alert('Opening event management...');
+                }
+
+                function viewMembers() {
+                    alert('Opening members list...');
+                }
+
+                function downloadReports() {
+                    alert('Downloading organization reports...');
+                }
+
+                function logout() {
+                    window.location.href = "/logout";
+                }
+
+                window.addEventListener('click', function(event) {
+                    const modal = document.getElementById('editModal');
+                    if (event.target === modal) {
+                        closeEditModal();
+                    }
+                });
+
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        closeEditModal();
+                    }
+                });
+
+                async function loadPostCount() {
+                    try {
+                        const page = window.location.pathname.replace("/", "");
+                        const response = await fetch(`/org/posts-count/${page}`);
+                        const data = await response.json();
+                        document.getElementById("postsCount").textContent = data.count;
+                    } catch (error) {
+                        console.error("Error loading post count:", error);
+                        document.getElementById("postsCount").textContent = "0";
+                    }
+                }
+
+            </script>
+        </main>
+    </body>
+</html>
