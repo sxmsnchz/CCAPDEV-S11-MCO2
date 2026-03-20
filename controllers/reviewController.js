@@ -3,7 +3,9 @@ const Review = require("../models/Review");
 // GET /reviews/:org — called by script.js to load reviews for a page
 async function getReviews(req, res) {
     try {
-        const reviews = await Review.find({ org: req.params.org, archived: false }).populate("user");
+        const reviews = await Review.find({ org: req.params.org, archived: false })
+        .sort({ createdAt: -1 }) 
+        .populate('user');
         res.json(reviews);
     } catch (error) {
         console.error("GET REVIEWS ERROR:", error);
