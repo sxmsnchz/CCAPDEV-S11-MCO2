@@ -43,6 +43,13 @@
                             <strong id="adminEmailDisplay"></strong>
                         </span>
                     </div>
+
+                    <div style="margin-top: 15px;">
+                        <button onclick="changePassword()" class="btn-action">
+                            🔐 Change Password
+                        </button>
+                    </div>
+
                 </div>
 
                 <div class="admin-stats">
@@ -301,6 +308,57 @@
                     window.location.href = "/logout";
                 }
 
+                async function changePassword() {
+                    const currentPassword = prompt("Enter current password:");
+                    if (!currentPassword) return;
+
+                    const newPassword = prompt("Enter new password (min 8 characters):");
+                    if (!newPassword) return;
+
+                    // minimum length check
+                    if (newPassword.length < 8) {
+                        alert("Password must be at least 8 characters long.");
+                        return;
+                    }
+
+                    // prevent same password
+                    if (newPassword === currentPassword) {
+                        alert("New password must be different from current password.");
+                        return;
+                    }
+
+                    const confirmPassword = prompt("Confirm new password:");
+                    if (!confirmPassword) return;
+
+                    // confirm match
+                    if (newPassword !== confirmPassword) {
+                        alert("Passwords do not match.");
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch("/change-password", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ currentPassword, newPassword })
+                        });
+
+                        const data = await res.json();
+
+                        if (data.success) {
+                            alert("Password updated successfully!");
+                        } else {
+                            alert(data.message || "Failed to change password");
+                        }
+
+                    } catch (err) {
+                        console.error(err);
+                        alert("Error changing password");
+                    }
+                }
+
                     async function loadUsers() {
 
                         const res = await fetch("/admin/users");
@@ -372,6 +430,8 @@
                             table.appendChild(row);
 
                           });
+
+                          
 
                         }
 

@@ -241,8 +241,29 @@
                     const currentPassword = prompt("Enter current password:");
                     if (!currentPassword) return;
 
-                    const newPassword = prompt("Enter new password:");
+                    const newPassword = prompt("Enter new password (min 8 characters):");
                     if (!newPassword) return;
+
+                    // minimum length check
+                    if (newPassword.length < 8) {
+                        alert("Password must be at least 8 characters long.");
+                        return;
+                    }
+
+                    // prevent same password
+                    if (newPassword === currentPassword) {
+                        alert("New password must be different from current password.");
+                        return;
+                    }
+
+                    const confirmPassword = prompt("Confirm new password:");
+                    if (!confirmPassword) return;
+
+                    // confirm match
+                    if (newPassword !== confirmPassword) {
+                        alert("Passwords do not match.");
+                        return;
+                    }
 
                     try {
                         const res = await fetch("/change-password", {
@@ -267,6 +288,7 @@
                     }
                 }
 
+            
 
                 function openEditModal() {
                     document.getElementById('editOrgName').value = currentOrgUser.orgName || '';

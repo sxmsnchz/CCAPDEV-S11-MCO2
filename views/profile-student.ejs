@@ -285,32 +285,54 @@
                 }
                 
                 async function changePassword() {
+                    const currentPassword = prompt("Enter current password:");
+                    if (!currentPassword) return;
 
-                  const currentPassword = prompt("Enter current password:");
-                  if (!currentPassword) return;
+                    const newPassword = prompt("Enter new password (min 8 characters):");
+                    if (!newPassword) return;
 
-                  const newPassword = prompt("Enter new password:");
-                  if (!newPassword) return;
+                    // minimum length check
+                    if (newPassword.length < 8) {
+                        alert("Password must be at least 8 characters long.");
+                        return;
+                    }
 
-                  const res = await fetch("/change-password", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                      currentPassword,
-                      newPassword
-                    })
-                  });
+                    // prevent same password
+                    if (newPassword === currentPassword) {
+                        alert("New password must be different from current password.");
+                        return;
+                    }
 
-                  const data = await res.json();
+                    const confirmPassword = prompt("Confirm new password:");
+                    if (!confirmPassword) return;
 
-                  if (data.success) {
-                    alert("Password changed successfully!");
-                  } else {
-                    alert(data.message || "Error changing password");
-                  }
+                    // confirm match
+                    if (newPassword !== confirmPassword) {
+                        alert("Passwords do not match.");
+                        return;
+                    }
 
+                    try {
+                        const res = await fetch("/change-password", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ currentPassword, newPassword })
+                        });
+
+                        const data = await res.json();
+
+                        if (data.success) {
+                            alert("Password updated successfully!");
+                        } else {
+                            alert(data.message || "Failed to change password");
+                        }
+
+                    } catch (err) {
+                        console.error(err);
+                        alert("Error changing password");
+                    }
                 }
 
 
