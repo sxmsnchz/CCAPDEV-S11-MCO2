@@ -41,6 +41,7 @@
                             <button onclick="openEditModal()" class="btn-action">✏️ Edit Profile</button>
                             <button onclick="managePosts()" class="btn-action">📝 Manage Posts</button>
                             <button onclick="viewAnalytics()" class="btn-action">📊 View Analytics</button>
+                            <button onclick="changePassword()" class="btn-action">🔐 Change Password</button>
                         </div>
                     </div>
                 </div>
@@ -235,6 +236,37 @@
                         membersList.appendChild(li);
                     });
                 }
+
+                async function changePassword() {
+                    const currentPassword = prompt("Enter current password:");
+                    if (!currentPassword) return;
+
+                    const newPassword = prompt("Enter new password:");
+                    if (!newPassword) return;
+
+                    try {
+                        const res = await fetch("/change-password", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ currentPassword, newPassword })
+                        });
+
+                        const data = await res.json();
+
+                        if (data.success) {
+                            alert("Password updated successfully!");
+                        } else {
+                            alert(data.message || "Failed to change password");
+                        }
+
+                    } catch (err) {
+                        console.error(err);
+                        alert("Error changing password");
+                    }
+                }
+
 
                 function openEditModal() {
                     document.getElementById('editOrgName').value = currentOrgUser.orgName || '';
