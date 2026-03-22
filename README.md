@@ -65,92 +65,152 @@ CCAPDEV-S11-MCO2/
 
 ## Database Overview
 
-The database stores information such as:
-- Student logins:
+### Users
+Stores all account types in a single collection, differentiated by userType.
+
+Shared Fields (all user types)
+  - email        : String   | required, unique
+  - password     : String   | required, bcrypt hashed
+  - userType     : String   | required, enum: "student", "organization", "admin"
+  - createdAt    : Date     | auto-generated
+  - updatedAt    : Date     | auto-generated
+
+Student Fields (userType = "student")
+  - firstName    : String   | required
+  - lastName     : String   | required
+  - studentId    : String   | required
+  - college      : String   | required
+  - profileImage : String   | default: "/assets/profile-icon.png"
+
+Organization Fields (userType = "organization")
+  - orgName      : String   | required
+  - description  : String   | required
+  - tagline      : String   | default: ""
+  - president    : String   | default: ""
+  - orgType      : String   | default: ""
+  - logo         : String   | default: "/assets/default-org.png"
+
+### Posts
+Stores announcements and updates published by organizations.
+
+  - title        : String   | required, trimmed
+  - content      : String   | required
+  - organization : ObjectId | required, ref: users
+  - image        : String   | default: ""
+  - likes        : ObjectId[] | array of users who liked the post, ref: users
+  - createdAt    : Date     | auto-generated
+  - updatedAt    : Date     | auto-generated
+
+### Comments
+Stores comments left by users on organization posts.
+
+  - text         : String   | required
+  - user         : ObjectId | ref: users
+  - page         : String   | org identifier e.g. "org1"
+  - post         : String   | post identifier
+  - createdAt    : Date     | default: Date.now
+
+### Reviews
+Stores star ratings and written reviews for organizations.
+
+  - user         : ObjectId | required, ref: users
+  - org          : String   | required, org identifier e.g. "org1"
+  - rating       : Number   | required, min: 1, max: 5
+  - comment      : String   | required, trimmed
+  - archived     : Boolean  | default: false (true = soft deleted, hidden from page)
+  - createdAt    : Date     | default: Date.now
+
+
+### Log-In Credentials
+
+Student logins:
 - juan.delacruz@dlsu.edu.ph / password123
 - maria.santos@dlsu.edu.ph / password123
 - john.lim@dlsu.edu.ph / password123
   
-- Org logins:
+Org logins:
 - au@dlsu.edu.ph / password123
 - cso@dlsu.edu.ph / password123
 - iso@dlsu.edu.ph / password123
 - lscs@dlsu.edu.ph / password123
 - mafia@dlsu.edu.ph / password123
   
-- Admin login:
+Admin login:
 - admin@orgspace.dlsu.edu.ph / admin123
 
 ## How to Run the Project
 
-Running in Windows
+#### Running in Windows
 
+```
 1. Clone the repository
-```
-git clone https://github.com/sxmsnchz/CCAPDEV-S11-MCO2.git
-cd CCAPDEV-S11-MCO2
+    git clone https://github.com/sxmsnchz/CCAPDEV-S11-MCO2.git
+    cd CCAPDEV-S11-MCO2
 ```
 
+```
 2. Install dependencies
-- mongodb: https://www.mongodb.com/try/download/community
-- npm, node.js: https://nodejs.org/en
+    - mongodb: https://www.mongodb.com/try/download/community
+    - npm, node.js: https://nodejs.org/en
+```
 
+```
 3. Create Connection and Database in MongoDB
-- You may need to edit connection string in /config/db.js
+    - You may need to edit connection string in /config/db.js
+```
 
+```
 4. Run program
+    npm start             //checks if db already has content
+    npm run seed          //continues to seed db
+    npm run server        //ignores seed.js entirely
 ```
-npm start
+
+#### Running in WSL (Windows Subsystem for Linux)
+
 ```
-
-
-Running in WSL (Windows Subsystem for Linux)
-
 1. Install dependencies
-- prepare packages
-```
-sudo apt update && sudo apt upgrade -y
-sudo apt install curl -y
+    - prepare packages
+        sudo apt update && sudo apt upgrade -y
+        sudo apt install curl -y
+
+    - npm, node.js
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+        nvm install --lts
+        node -v
+        npm -v
+
+    - MongoDB
+        curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
+        echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+        sudo apt update && sudo apt install -y mongodb-org
+        sudo systemctl start mongod
+        mongod --version
+
+    - Compass (in Powershell terminal as Admin)
+        winget install --id=MongoDB.Compass.Full -e
+
 ```
 
-- npm, node.js
 ```
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-nvm install --lts
-node -v
-npm -v
-```
-
-- MongoDB
-```
-curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
-echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
-sudo apt update && sudo apt install -y mongodb-org
-sudo systemctl start mongod
-mongod --version
-```
-
-- Compass (in Powershell terminal as Admin)
-```
-winget install --id=MongoDB.Compass.Full -e
-```
-
 2. Clone the repository
-```
-git clone https://github.com/sxmsnchz/CCAPDEV-S11-MCO2.git
-cd CCAPDEV-S11-MCO2
+    git clone https://github.com/sxmsnchz/CCAPDEV-S11-MCO2.git
+    cd CCAPDEV-S11-MCO2
 ```
 
+```
 3. Run MongoDB 
-```
-sudo systemctl start mongod
-sudo systemctl status mongod
-```
-- Open Compass in PC and start connection
+    sudo systemctl start mongod
+    sudo systemctl status mongod
 
-4. Run program
+    - Open Compass in PC and start connection
 ```
-npm start
+
+```
+4. Run program
+    npm start             //checks if db already has content
+    npm run seed          //continues to seed db
+    npm run server        //ignores seed.js entirely
 ```
 
 ## Contributors

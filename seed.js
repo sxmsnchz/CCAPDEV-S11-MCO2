@@ -9,6 +9,19 @@ async function seedData() {
     try {
         console.log("Seeding users, comments and reviews...");
 
+        // check if --force flag was passed
+        const forceReseed = process.argv.includes("--force");
+
+        // check if DB already has data
+        const existingUsers = await User.countDocuments();
+
+        if (existingUsers > 0 && !forceReseed) {
+            console.log("Database already has data. Skipping seed.");
+            console.log("Run 'npm run seed' to force reseed.");
+            console.log("Run 'npm run server' to ignore seeding in general.");
+            process.exit();
+        }
+
         await User.deleteMany({});
         await Comment.deleteMany({});
         await Review.deleteMany({});
