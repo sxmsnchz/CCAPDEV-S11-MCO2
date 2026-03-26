@@ -163,7 +163,7 @@ Admin login:
 ```
 4. Run program
     npm start             //checks if db already has content
-    npm run seed          //continues to seed db
+    npm run seed          //continues to seed db; you only need to run this once (upon first run)
     npm run server        //ignores seed.js entirely
 ```
 
