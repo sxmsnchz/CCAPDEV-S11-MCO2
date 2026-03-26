@@ -155,7 +155,7 @@ Admin login:
 ```
 
 ```
-3. Create Connection and Database in MongoDB
+3. Create Connection and Database in MongoDB Compass (Local)
     - You may need to edit connection string in /config/db.js
     - Create "orgspace" database
 ```
