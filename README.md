@@ -157,6 +157,7 @@ Admin login:
 ```
 3. Create Connection and Database in MongoDB
     - You may need to edit connection string in /config/db.js
+    - Create "orgspace" database
 ```
 
 ```
