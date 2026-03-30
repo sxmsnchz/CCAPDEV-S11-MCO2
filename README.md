@@ -141,9 +141,7 @@ Admin login:
 ## How to Run the Project
 
 Note:
-This project is connected to 
-  - MongoDB Atlas
-  - Render
+This project is connected to MongoDB Atlas & Render.
 To clone the project, you must set up the following
   - MongoDB Atlas cluster
   - Environment variables (.env)
