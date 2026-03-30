@@ -181,7 +181,7 @@ https://ccapdev-s11-mco2-3.onrender.com
 
 ## Notes
 
-The depoloyed app may take a while to load on first visit (free hosting). 
+The deployed app may take a while to load on first visit (free hosting). 
 
 This project was developed for academic purposes and is not yet an official school system.
 This project uses a local MongoDB database during development. The database is automatically populated with test accounts using the seed.js file.
