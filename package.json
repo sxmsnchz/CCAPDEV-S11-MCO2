@@ -15,8 +15,7 @@
   "type": "commonjs",
   "main": "config.js",
   "scripts": {
-    "start": "node seed.js && node server.js",
-    "server": "node server.js",
+    "start": "node server.js",
     "seed": "node seed.js --force && node server.js"
   },
   "dependencies": {
