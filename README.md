@@ -151,6 +151,8 @@ To clone the project, you must set up the following:
 ```
 Access the application here:
 https://ccapdev-s11-mco2-3.onrender.com
+
+Note: The application may take a while to load due to free hosting.
 ```
 
 #### Option 2 - Run Locally
