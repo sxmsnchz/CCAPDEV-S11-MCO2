@@ -140,79 +140,35 @@ Admin login:
 
 ## How to Run the Project
 
-#### Running in Windows
+Note:
+This project is connected to 
+  - MongoDB Atlas
+  - Render
+To clone the project, you must set up the following
+  - MongoDB Atlas cluster
+  - Environment variables (.env)
+
+#### Option 1 - Use Deployed App (Recommended)
+
+```
+Access the application here:
+https://ccapdev-s11-mco2-3.onrender.com
+```
+
+#### Option 2 - Run Locally
 
 ```
 1. Clone the repository
-    git clone https://github.com/sxmsnchz/CCAPDEV-S11-MCO2.git
-    cd CCAPDEV-S11-MCO2
-```
-
-```
 2. Install dependencies
-    - mongodb: https://www.mongodb.com/try/download/community
-    - npm, node.js: https://nodejs.org/en
+  - npm install
+3. Create .env file
+4. Seed database
+  - node seed.js
+5. Run the server
+  - npm start
+  
 ```
 
-```
-3. Create Connection and Database in MongoDB Compass (Local)
-    - You may need to edit connection string in /config/db.js
-    - Create "orgspace" database
-```
-
-```
-4. Run program
-    npm start             //checks if db already has content
-    npm run seed          //continues to seed db; you only need to run this once (upon first run)
-    npm run server        //ignores seed.js entirely
-```
-
-#### Running in WSL (Windows Subsystem for Linux)
-
-```
-1. Install dependencies
-    - prepare packages
-        sudo apt update && sudo apt upgrade -y
-        sudo apt install curl -y
-
-    - npm, node.js
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-        nvm install --lts
-        node -v
-        npm -v
-
-    - MongoDB
-        curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
-        echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
-        sudo apt update && sudo apt install -y mongodb-org
-        sudo systemctl start mongod
-        mongod --version
-
-    - Compass (in Powershell terminal as Admin)
-        winget install --id=MongoDB.Compass.Full -e
-
-```
-
-```
-2. Clone the repository
-    git clone https://github.com/sxmsnchz/CCAPDEV-S11-MCO2.git
-    cd CCAPDEV-S11-MCO2
-```
-
-```
-3. Run MongoDB 
-    sudo systemctl start mongod
-    sudo systemctl status mongod
-
-    - Open Compass in PC and start connection
-```
-
-```
-4. Run program
-    npm start             //checks if db already has content
-    npm run seed          //continues to seed db; you only need to run this once (upon first run)
-    npm run server        //ignores seed.js entirely
-```
 
 ## Contributors
 
@@ -224,5 +180,8 @@ Admin login:
 
 ## Notes
 
+The depoloyed app may take a while to load on first visit (free hosting). 
+
 This project was developed for academic purposes and is not yet an official school system.
 This project uses a local MongoDB database during development. The database is automatically populated with test accounts using the seed.js file.
+Do not run the script multiple times as it may overwrite data.
