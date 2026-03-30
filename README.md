@@ -142,7 +142,7 @@ Admin login:
 
 Note:
 This project is connected to MongoDB Atlas & Render.
-To clone the project, you must set up the following
+To clone the project, you must set up the following:
   - MongoDB Atlas cluster
   - Environment variables (.env)
 
