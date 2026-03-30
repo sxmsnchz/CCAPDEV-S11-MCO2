@@ -157,14 +157,17 @@ https://ccapdev-s11-mco2-3.onrender.com
 
 ```
 1. Clone the repository
+
 2. Install dependencies
   - npm install
+
 3. Create .env file
+
 4. Seed database
   - node seed.js
+
 5. Run the server
   - npm start
-  
 ```
 
 
